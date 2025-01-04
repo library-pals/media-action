@@ -1,0 +1,21 @@
+name: Media
+author: Katy DeCorah
+description: Create a media log.
+runs:
+  using: node20
+  main: dist/index.js
+inputs:
+  filename:
+    description: The file where you want to save your media.
+    default: _data/media.json
+outputs:
+  now-watching:
+    description: The current media you are watching.
+  media-thumbnail:
+    description: The thumbnail of the current media you are watching.
+  media-thumbnail-url:
+    description: The URL of the thumbnail of the current media you are watching.
+  media-status:
+    description: The status of the current media.
+  media-title:
+    description: The title of the current media.

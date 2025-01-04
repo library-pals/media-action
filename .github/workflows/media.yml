@@ -1,0 +1,72 @@
+name: media action
+run-name: 🎬 ${{ inputs['media-status'] }} media ${{ inputs.identifier }}
+
+# Grant the action permission to write to the repository
+permissions:
+  contents: write
+
+# Trigger the action
+on:
+  workflow_dispatch:
+    inputs:
+      media-status:
+        description: What is the status of the media? Required.
+        required: true
+        type: choice
+        default: "want to watch"
+        options:
+          - "want to watch"
+          - "watching"
+          - "watched"
+          - "summary" # Outputs your media summary year to date
+      identifier:
+        description: The media's identifier. Required.
+        # Example values:
+        # https://www.imdb.com/title/tt7908628/
+        type: string
+      date:
+        description: Date to record the status of the media (YYYY-MM-DD). Leave blank for today.
+        type: string
+      notes:
+        description: Notes about the media. Optional.
+        type: string
+      # Adding a rating is optional.
+      # You can change the options to whatever you want to use.
+      # For example, you can use numbers, other emoji, or words.
+      rating:
+        description: Rate the media. Optional.
+        type: choice
+        default: "unrated"
+        options:
+          - "unrated"
+          - ⭐️
+          - ⭐️⭐️
+          - ⭐️⭐️⭐️
+          - ⭐️⭐️⭐️⭐️
+          - ⭐️⭐️⭐️⭐️⭐️
+      # Tags are optional.
+      tags:
+        description: Add tags to categorize the media. Separate each tag with a comma.
+        type: string
+
+# Set up the steps to run the action
+jobs:
+  update-library:
+    runs-on: ubuntu-latest
+    name: Media
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Media
+        id: media-log
+        uses: ./
+
+      - name: Commit updated media file
+        if: inputs['media-status'] != 'summary'
+        run: |
+          git pull
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A && git commit -m "🎬 “${{ steps.media-log.outputs.media-title }}” (${{ inputs['media-status'] }})"
+          git push

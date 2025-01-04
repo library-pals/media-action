@@ -1,0 +1,118 @@
+{
+  "success": true,
+  "ogUrl": "https://www.imdb.com/title/tt7908628/",
+  "ogSiteName": "IMDb",
+  "ogTitle": "What We Do in the Shadows (TV Series 2019–2024) ⭐ 8.6 | Comedy, Fantasy, Horror",
+  "ogDescription": "30m | TV-MA",
+  "ogType": "video.tv_show",
+  "ogLocale": "en_US",
+  "ogLocaleAlternate": "de_DE",
+  "twitterSite": "@IMDb",
+  "twitterTitle": "What We Do in the Shadows (TV Series 2019–2024) ⭐ 8.6 | Comedy, Fantasy, Horror",
+  "twitterDescription": "30m | TV-MA",
+  "twitterCard": "summary_large_image",
+  "ogImage": [
+    {
+      "height": "1250",
+      "url": "https://m.media-amazon.com/images/M/MV5BNDhiYTVlYjUtMDc4OC00NzBmLWE5YTYtNDBjZDc4MzM3YzNmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+      "width": "1000",
+      "type": "jpg"
+    }
+  ],
+  "twitterImage": [
+    {
+      "alt": "What We Do in the Shadows: With Kayvan Novak, Matt Berry, Natasia Demetriou, Harvey Guillén. A look into the nightly lives of four vampires who have lived together on Staten Island for over a century.",
+      "url": "https://m.media-amazon.com/images/M/MV5BNDhiYTVlYjUtMDc4OC00NzBmLWE5YTYtNDBjZDc4MzM3YzNmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
+    }
+  ],
+  "favicon": "https://m.media-amazon.com/images/G/01/imdb/images-ANDW73HA/favicon_iPhone_retina_180x180._CB1582158069_UX196_.png",
+  "charset": "utf-8",
+  "jsonLD": [
+    {
+      "@context": "https://schema.org",
+      "@type": "TVSeries",
+      "url": "https://www.imdb.com/title/tt7908628/",
+      "name": "What We Do in the Shadows",
+      "image": "https://m.media-amazon.com/images/M/MV5BNDhiYTVlYjUtMDc4OC00NzBmLWE5YTYtNDBjZDc4MzM3YzNmXkEyXkFqcGc@._V1_.jpg",
+      "description": "A look into the nightly lives of four vampires who have lived together on Staten Island for over a century.",
+      "review": {
+        "@type": "Review",
+        "itemReviewed": {
+          "@type": "TVSeries",
+          "url": "https://www.imdb.com/title/tt7908628/"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "mignonette1"
+        },
+        "dateCreated": "2019-05-02",
+        "inLanguage": "English",
+        "name": "As good as the movie!",
+        "reviewBody": "For any who haven&apos;t seen the movie of the same title, it&apos;s highly recommended.\n\nI was worried the show wouldn&apos;t be able to capture the comedic genius of the movie, but i have not been disappointed in the slightest. It&apos;s fantastic!",
+        "reviewRating": {
+          "@type": "Rating",
+          "worstRating": 1,
+          "bestRating": 10,
+          "ratingValue": 10
+        }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingCount": 114015,
+        "bestRating": 10,
+        "worstRating": 1,
+        "ratingValue": 8.6
+      },
+      "contentRating": "TV-MA",
+      "genre": ["Comedy", "Fantasy", "Horror"],
+      "datePublished": "2019-03-27",
+      "keywords": "nudity,vampire,spin off,word play,vampire exploitation",
+      "actor": [
+        {
+          "@type": "Person",
+          "url": "https://www.imdb.com/name/nm1315378/",
+          "name": "Kayvan Novak"
+        },
+        {
+          "@type": "Person",
+          "url": "https://www.imdb.com/name/nm1546196/",
+          "name": "Matt Berry"
+        },
+        {
+          "@type": "Person",
+          "url": "https://www.imdb.com/name/nm5857106/",
+          "name": "Natasia Demetriou"
+        }
+      ],
+      "creator": [
+        {
+          "@type": "Organization",
+          "url": "https://www.imdb.com/company/co0216537/"
+        },
+        {
+          "@type": "Organization",
+          "url": "https://www.imdb.com/company/co0739718/"
+        },
+        {
+          "@type": "Organization",
+          "url": "https://www.imdb.com/company/co0739717/"
+        }
+      ],
+      "trailer": {
+        "@type": "VideoObject",
+        "name": "Official Trailer - Season 6",
+        "embedUrl": "https://www.imdb.com/video/imdb/vi2303116825",
+        "thumbnail": {
+          "@type": "ImageObject",
+          "contentUrl": "https://m.media-amazon.com/images/M/MV5BNTBlOGY2YWMtYTdjNy00MjFiLThjYjYtNGNlNDliMzBjMDM4XkEyXkFqcGdeQXRyYW5zY29kZS13b3JrZmxvdw@@._V1_.jpg"
+        },
+        "thumbnailUrl": "https://m.media-amazon.com/images/M/MV5BNTBlOGY2YWMtYTdjNy00MjFiLThjYjYtNGNlNDliMzBjMDM4XkEyXkFqcGdeQXRyYW5zY29kZS13b3JrZmxvdw@@._V1_.jpg",
+        "url": "https://www.imdb.com/video/vi2303116825/",
+        "description": "A look into the nightly lives of four vampires who have lived together on Staten Island for over a century.",
+        "duration": "PT1M52S",
+        "uploadDate": "2024-10-03T19:42:20.706Z"
+      }
+    }
+  ],
+  "requestUrl": "https://www.imdb.com/title/tt7908628/"
+}
