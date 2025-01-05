@@ -12,7 +12,7 @@ Depending on the type of `identifier` you submit to the action, it will use the 
 
 | Identifier | Provider                                        | Example `identifier` value             |
 | ---------- | ----------------------------------------------- | -------------------------------------- |
-| IMDb       | [IMDb](https://www.imdb.com/) via meta scraping | `https://www.imdb.com/title/tt7908628` |
+| IMDb URL   | [IMDb](https://www.imdb.com/) via meta scraping | `https://www.imdb.com/title/tt7908628` |
 
 ## Media lifecycle
 
@@ -126,8 +126,6 @@ To trigger the action, [create a workflow dispatch event](https://docs.github.co
   }
 }
 ```
-
-
 
 ## Action outputs
 
