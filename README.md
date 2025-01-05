@@ -20,6 +20,10 @@ When you add or update media, you can set it as: `want to watch`, `watching`, or
 
 To update the media's status, trigger the action using the same identifier (IMDb URL) that you used in the initial request.
 
+## Example media file
+
+Visit [\_data/media.json](https://github.com/library-pals/media-action/blob/main/_data/media.json) for a sample media file.
+
 <!-- START GENERATED DOCUMENTATION -->
 
 ## Set up the workflow
