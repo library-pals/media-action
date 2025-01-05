@@ -99,7 +99,7 @@ export async function handleNewMedia({
   const newMedia = await provider.action.fetchMedia(mediaParams);
 
   if (!newMedia) {
-    throw new Error("Failed to fetch media");
+    throw new Error(`Failed to fetch media for URL: ${mediaParams.inputIdentifier}`);
   }
 
   library.push(newMedia);
