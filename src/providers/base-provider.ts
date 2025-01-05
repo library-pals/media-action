@@ -1,0 +1,149 @@
+import ogs from "open-graph-scraper";
+import { NewMedia, MediaParams } from "../types";
+import { OgObject } from "open-graph-scraper/types/lib/types";
+import { TVSeries, Movie } from "schema-dts";
+
+export class BaseProvider {
+  protected parsedOgMetadata: Partial<NewMedia> = {};
+  protected parsedJsonLDMetadata: Partial<NewMedia> = {};
+
+  get title(): string | undefined {
+    return this.parsedJsonLDMetadata.title || this.parsedOgMetadata.title;
+  }
+
+  get description(): string | undefined {
+    return (
+      this.parsedJsonLDMetadata.description || this.parsedOgMetadata.description
+    );
+  }
+
+  get thumbnail(): string | undefined {
+    return (
+      this.parsedJsonLDMetadata.thumbnail || this.parsedOgMetadata.thumbnail
+    );
+  }
+
+  get genres(): string[] | undefined {
+    return this.parsedJsonLDMetadata.genres;
+  }
+
+  get format(): string | undefined {
+    return this.parsedJsonLDMetadata.format || this.parsedOgMetadata.format;
+  }
+
+  get contentRating(): string | undefined {
+    return this.parsedJsonLDMetadata.contentRating;
+  }
+
+  async fetchMedia(options: MediaParams): Promise<NewMedia | undefined> {
+    const { notes, inputIdentifier, dateType, status, rating, tags } = options;
+    try {
+      const ogsOptions = { url: inputIdentifier };
+      const { result } = await ogs(ogsOptions);
+
+      this.parsedOgMetadata = this.parseOg(result);
+      this.parsedJsonLDMetadata = this.parseJsonLd(result);
+
+      const image = this.setImage(this.title, this.thumbnail, this.format);
+
+      return {
+        identifier: inputIdentifier,
+        status,
+        ...dateType,
+        // From the provider
+        ...(this.title && { title: this.title }),
+        ...(this.description && { description: this.description }),
+        ...(this.thumbnail && { thumbnail: this.thumbnail }),
+        ...(this.genres && { genres: this.genres }),
+        ...(this.format && { format: this.format }),
+        ...(this.contentRating && { contentRating: this.contentRating }),
+        // From the viewer's input
+        ...(notes && { notes }),
+        ...(rating && { rating }),
+        ...(tags && { tags }),
+        ...(image && { image }),
+      };
+    } catch (error) {
+      throw new Error(`Failed to get media: ${error.message}`);
+    }
+  }
+
+  protected setImage(
+    title: string = "",
+    thumbnail: string = "",
+    type: string = ""
+  ): string {
+    if (!thumbnail) return "";
+
+    const url = new URL(thumbnail);
+    const pathname = url.pathname;
+    let thumbnailExtension = pathname.includes(".")
+      ? pathname.split(".").pop()?.toLowerCase()
+      : "";
+
+    const imageExtensions = new Set(["jpg", "jpeg", "png", "gif"]);
+    if (!thumbnailExtension || !imageExtensions.has(thumbnailExtension)) {
+      thumbnailExtension = "jpg"; // Default to JPG if no valid extension is found
+    }
+
+    const formattedTitle = title.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
+    const relativePath: string[] = [];
+
+    if (type) relativePath.push(type);
+    if (type && formattedTitle) relativePath.push("-");
+    if (formattedTitle) relativePath.push(formattedTitle);
+    if (thumbnailExtension) relativePath.push(`.${thumbnailExtension}`);
+
+    return relativePath.join("");
+  }
+
+  protected parseOg(result: OgObject): {
+    title?: string;
+    description?: string;
+    thumbnail?: string;
+    format?: string;
+  } {
+    return {
+      title: result.ogTitle,
+      description: result.ogDescription,
+      thumbnail: result?.ogImage?.[0]?.url,
+      format: result.ogType,
+    };
+  }
+
+  protected safeToString(value: unknown): string | undefined {
+    return value?.toString() ?? undefined;
+  }
+
+  protected parseCategories(genre: unknown): string[] {
+    if (!genre) return [];
+    if (typeof genre === "string" && genre.includes("&amp;")) {
+      return genre.split("&amp;").map((a: string) => a.trim());
+    }
+    return genre
+      .toString()
+      .split(",")
+      .map((g: string) => g.trim())
+      .filter((g: string) => g);
+  }
+
+  protected parseJsonLd(result: OgObject): Partial<NewMedia> {
+    if (!result.jsonLD) {
+      return {};
+    }
+
+    const schema = result.jsonLD[0] as TVSeries | Movie;
+    if (!schema) {
+      return {};
+    }
+
+    return {
+      title: this.safeToString(schema.name),
+      description: this.safeToString(schema.description),
+      thumbnail: this.safeToString(schema.image),
+      genres: this.parseCategories(schema.genre),
+      format: schema["@type"].toLocaleLowerCase(),
+      contentRating: this.safeToString(schema.contentRating),
+    };
+  }
+}

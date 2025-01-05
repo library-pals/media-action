@@ -41,7 +41,7 @@ describe("index", () => {
       .mockImplementation((v) => defaultOptions[v] || undefined);
   });
 
-  test("works, watched", async () => {
+  test("works, imdb, watched", async () => {
     const exportVariableSpy = jest.spyOn(core, "exportVariable");
     const setFailedSpy = jest.spyOn(core, "setFailed");
     const setOutputSpy = jest.spyOn(core, "setOutput");
@@ -72,7 +72,6 @@ describe("index", () => {
           {
             "contentRating": "TV-MA",
             "dateFinished": "2022-01-02T00:00:00.000Z",
-            "datePublished": "2019-03-27",
             "description": "A look into the nightly lives of four vampires who have lived together on Staten Island for over a century.",
             "format": "tvseries",
             "genres": [
@@ -85,6 +84,56 @@ describe("index", () => {
             "status": "watched",
             "thumbnail": "https://m.media-amazon.com/images/M/MV5BNDhiYTVlYjUtMDc4OC00NzBmLWE5YTYtNDBjZDc4MzM3YzNmXkEyXkFqcGc@._V1_.jpg",
             "title": "What We Do in the Shadows",
+          },
+        ],
+      ]
+    `);
+  });
+
+  test("works, rotten tomatoes, want to watch", async () => {
+    const exportVariableSpy = jest.spyOn(core, "exportVariable");
+    const setFailedSpy = jest.spyOn(core, "setFailed");
+    const setOutputSpy = jest.spyOn(core, "setOutput");
+    Object.defineProperty(github, "context", {
+      value: {
+        payload: {
+          inputs: {
+            identifier: "https://www.rottentomatoes.com/m/dog_man",
+            "media-status": "want to watch",
+            date: "2025-01-05",
+          },
+        },
+      },
+    });
+    await read();
+    expect(exportVariableSpy.mock.calls).toMatchInlineSnapshot(`[]`);
+    expect(setFailedSpy).not.toHaveBeenCalled();
+    expect(setOutputSpy.mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "media-status",
+        "want to watch",
+      ]
+    `);
+    expect(returnWriteFile.mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "my-media.json",
+        [
+          {
+            "contentRating": "PG",
+            "dateAdded": "2025-01-05T00:00:00.000Z",
+            "description": "When a faithful police dog and his human police officer owner are injured together on the job, a harebrained but life-saving surgery fuses the two of them together and Dog Man is born. Dog Man is sworn to protect and serve--and fetch, sit and roll over. As Dog Man embraces his new identity and strives to impress his Chief (Lil Rel Howery, Get Out, Free Guy), he must stop the pretty evil plots of feline supervillain Petey the Cat (Pete Davidson; Saturday Night Live, The King of Staten Island). Petey's latest plan is to clone himself, creating the kitten Lil Petey, to double his ability to do crime stuff. Things get complicated, though, when Lil Petey forges an unexpected bond with Dog Man. When Lil Petey falls into the clutches of a common enemy, Dog Man and Petey reluctantly join forces in an action-packed race against time to rescue the young kitten. In the process, they discover the power of family (and kittens!) to bring even the most hostile foes together.",
+            "format": "movie",
+            "genres": [
+              "Kids & Family",
+              "Comedy",
+              "Adventure",
+              "Animation",
+            ],
+            "identifier": "https://www.rottentomatoes.com/m/dog_man",
+            "image": "movie-dog-man.jpg",
+            "status": "want to watch",
+            "thumbnail": "https://resizing.flixster.com/HPdK25sm6ORpv8lKoGQhenwqpNI=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzL2YwMjdlMTNkLTkzYzEtNDFjYy05NzU1LTEyZWRlYzExMDBjYy5qcGc=",
+            "title": "Dog Man",
           },
         ],
       ]

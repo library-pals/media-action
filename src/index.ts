@@ -2,7 +2,6 @@ import { getInput, setFailed, setOutput } from "@actions/core";
 import * as github from "@actions/github";
 import returnReadFile from "./read-file";
 import returnWriteFile from "./write-file";
-import { getImdb } from "./providers/imdb";
 import { MediaPayload, MediaParams, ActionInputs } from "./types";
 import {
   getMediaStatus,
@@ -12,10 +11,17 @@ import {
   sortByDate,
 } from "./media-utils";
 
+import { ImdbProvider } from "./providers/imdb";
+import { RottenTomatoesProvider } from "./providers/rotten-tomatoes";
+
 export const providerAction = [
   {
     check: (url: string) => url.startsWith("https://www.imdb.com/"),
-    action: getImdb,
+    action: new ImdbProvider(),
+  },
+  {
+    check: (url: string) => url.startsWith("https://www.rottentomatoes.com/"),
+    action: new RottenTomatoesProvider(),
   },
 ];
 
