@@ -1,7 +1,6 @@
 # media-action
 
-Keep a media log
-
+This GitHub action helps you track the tv shows or movies that you watch by updating a JSON file in your repository.
 
 <!-- START GENERATED DOCUMENTATION -->
 
@@ -105,8 +104,6 @@ To trigger the action, [create a workflow dispatch event](https://docs.github.co
   }
 }
 ```
-
-
 
 ## Action outputs
 
