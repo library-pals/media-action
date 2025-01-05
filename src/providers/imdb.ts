@@ -41,20 +41,35 @@ function parseResult(result: OgObject): Partial<NewMedia> {
   const schema = result.jsonLD[0] as TVSeries | Movie;
   const title = safeToString(schema.name);
   const format = schema["@type"].toLocaleLowerCase();
+  const thumbnail = safeToString(schema.image);
   return {
     title,
     description: safeToString(schema.description),
     datePublished: safeToString(schema.datePublished),
-    thumbnail: safeToString(schema.image),
+    thumbnail,
     genres: parseCategories(schema.genre),
     format,
     contentRating: safeToString(schema.contentRating),
-    image: setImage(title, format),
+    image: setImage(title, thumbnail, format),
   };
 }
 
-function setImage(title?: string, type?: string): string {
-  return `${type}-${title?.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-")}.png`;
+function setImage(
+  title: string = "",
+  thumbnail: string = "",
+  type: string = ""
+): string {
+  if (!thumbnail) return "";
+  const thumbnailExtension = thumbnail.split(".").pop() || "";
+  const formattedTitle = title.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
+  const relativePath: string[] = [];
+
+  if (type) relativePath.push(type);
+  if (type && formattedTitle) relativePath.push("-");
+  if (formattedTitle) relativePath.push(formattedTitle);
+  if (thumbnailExtension) relativePath.push(`.${thumbnailExtension}`);
+
+  return relativePath.join("");
 }
 
 export function parseOgMetatagResult(result: OgObject): {

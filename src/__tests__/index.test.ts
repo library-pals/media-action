@@ -81,7 +81,7 @@ describe("index", () => {
               "Horror",
             ],
             "identifier": "https://www.imdb.com/title/tt7908628/",
-            "image": "tvseries-what-we-do-in-the-shadows.png",
+            "image": "tvseries-what-we-do-in-the-shadows.jpg",
             "status": "watched",
             "thumbnail": "https://m.media-amazon.com/images/M/MV5BNDhiYTVlYjUtMDc4OC00NzBmLWE5YTYtNDBjZDc4MzM3YzNmXkEyXkFqcGc@._V1_.jpg",
             "title": "What We Do in the Shadows",

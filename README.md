@@ -10,7 +10,7 @@ To use this action, create a new workflow in `.github/workflows` and modify it a
 
 ```yml
 name: Add to media log
-run-name: 🎬 ${{ inputs['media-status'] }} media ${{ inputs.identifier }}
+run-name: 🎬 ${{ inputs['media-status'] }} ${{ inputs.identifier }}
 
 # Grant the action permission to write to the repository
 permissions:
@@ -72,6 +72,10 @@ jobs:
       - name: Media
         id: media-log
         uses: library-pals/media-action@v0.0.0
+
+      - name: Download the book thumbnail
+        if: steps.media-log.outputs.media-thumbnail != ''
+        run: curl "${{ steps.media-log.outputs.media-thumbnail-url }}" -o "img/${{ steps.media-log.outputs.media-thumbnail }}"
 
       - name: Commit updated media file
         if: inputs['media-status'] != 'summary'
