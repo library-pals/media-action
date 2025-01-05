@@ -71,7 +71,7 @@ jobs:
 
       - name: Media
         id: media-log
-        uses: library-pals/media-action@v0.0.0
+        uses: library-pals/media-action@v0.1.0
 
       - name: Download the book thumbnail
         if: steps.media-log.outputs.media-thumbnail != ''
