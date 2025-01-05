@@ -1,6 +1,25 @@
 # media-action
 
-This GitHub action helps you track the tv shows or movies that you watch by updating a JSON file in your repository.
+This GitHub action helps you track the tv shows or movies that you watch by updating a JSON file in your repository. Pair it with an iOS Shortcut to automatically trigger the action or click **Run workflow** from the Actions tab to submit details about the media.
+
+[Create a workflow dispatch event](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) with information about the media.
+
+Given a [data provider identifier](#data-providers), the action will fetch the media's metadata and commit the change in your repository, always sorting by the date you finished the book.
+
+## Data providers
+
+Depending on the type of `identifier` you submit to the action, it will use the following data provider.
+
+| Identifier | Provider | Example `identifier` value |
+| ---------- | -------- | -------------------------- |
+
+| IMDb | [IMDb](https://www.imdb.com/) via meta scraping | `https://www.imdb.com/title/tt7908628` |
+
+## Media lifecycle
+
+When you add or update media, you can set it as: `want to watch`, `watching`, or `watched`. This will set the value as `status` and will add an accompanying date for the status.
+
+To update the media's status, trigger the action using the same identifier (IMDb URL) that you used in the initial request.
 
 <!-- START GENERATED DOCUMENTATION -->
 
@@ -108,8 +127,6 @@ To trigger the action, [create a workflow dispatch event](https://docs.github.co
   }
 }
 ```
-
-
 
 ## Action outputs
 
