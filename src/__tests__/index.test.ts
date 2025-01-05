@@ -41,7 +41,55 @@ describe("index", () => {
       .mockImplementation((v) => defaultOptions[v] || undefined);
   });
 
-  test("works, watched", async () => {
+  test("works, watched, imdb, movie", async () => {
+    const setFailedSpy = jest.spyOn(core, "setFailed");
+    const setOutputSpy = jest.spyOn(core, "setOutput");
+    Object.defineProperty(github, "context", {
+      value: {
+        payload: {
+          inputs: {
+            identifier: "https://www.imdb.com/title/tt10954718/",
+            "media-status": "watched",
+            date: "2022-01-02",
+          },
+        },
+      },
+    });
+    await read();
+    expect(setFailedSpy).not.toHaveBeenCalled();
+    expect(setOutputSpy.mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "media-status",
+        "watched",
+      ]
+    `);
+    expect(returnWriteFile.mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "my-media.json",
+        [
+          {
+            "contentRating": "PG",
+            "dateFinished": "2022-01-02T00:00:00.000Z",
+            "datePublished": "2025-01-31",
+            "description": "Dog Man, half dog and half man, he is sworn to protect and serve as he doggedly pursues the feline supervillain Petey the Cat.",
+            "format": "movie",
+            "genres": [
+              "Animation",
+              "Action",
+              "Adventure",
+            ],
+            "identifier": "https://www.imdb.com/title/tt10954718/",
+            "image": "movie-dog-man.jpg",
+            "status": "watched",
+            "thumbnail": "https://m.media-amazon.com/images/M/MV5BZTBiOTViYzktMTM5Mi00ZTdmLWE0ZjQtNDk3NTc3NmM5Y2I3XkEyXkFqcGc@._V1_.jpg",
+            "title": "Dog Man",
+          },
+        ],
+      ]
+    `);
+  });
+
+  test("works, watched, imdb, tv", async () => {
     const exportVariableSpy = jest.spyOn(core, "exportVariable");
     const setFailedSpy = jest.spyOn(core, "setFailed");
     const setOutputSpy = jest.spyOn(core, "setOutput");
