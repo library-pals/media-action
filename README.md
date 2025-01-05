@@ -10,9 +10,10 @@ Given a [data provider identifier](#data-providers), the action will fetch the m
 
 Depending on the type of `identifier` you submit to the action, it will use the following data provider.
 
-| Identifier | Provider                                        | Example `identifier` value             |
-| ---------- | ----------------------------------------------- | -------------------------------------- |
-| IMDb URL   | [IMDb](https://www.imdb.com/) via meta scraping | `https://www.imdb.com/title/tt7908628` |
+| Identifier          | Provider                                                             | Example `identifier` value                 |
+| ------------------- | -------------------------------------------------------------------- | ------------------------------------------ |
+| IMDb URL            | [IMDb](https://www.imdb.com/) via meta scraping                      | `https://www.imdb.com/title/tt7908628`     |
+| Rotten Tomatoes URL | [Rotten Tomatoes](https://www.rottentomatoes.com/) via meta scraping | `https://www.rottentomatoes.com/m/dog_man` |
 
 ## Media lifecycle
 

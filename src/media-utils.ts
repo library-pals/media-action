@@ -90,9 +90,17 @@ export async function handleNewMedia({
   library: NewMedia[];
   mediaStatus: string;
 }): Promise<void> {
-  const newMedia = await (providerAction
-    .find(({ check }) => check(mediaParams.inputIdentifier))
-    ?.action(mediaParams) as Promise<NewMedia>);
+  const provider = providerAction.find(({ check }) =>
+    check(mediaParams.inputIdentifier)
+  );
+  if (!provider) {
+    throw new Error("No provider found for this URL");
+  }
+  const newMedia = await provider.action.fetchMedia(mediaParams);
+
+  if (!newMedia) {
+    throw new Error(`Failed to fetch media for URL: ${mediaParams.inputIdentifier}`);
+  }
 
   library.push(newMedia);
   setOutput("media-title", newMedia.title);
