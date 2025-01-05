@@ -90,7 +90,57 @@ describe("index", () => {
     `);
   });
 
-  test("works, rotten tomatoes, want to watch", async () => {
+  test("works, rotten tomatoes, watched, tv series", async () => {
+    const exportVariableSpy = jest.spyOn(core, "exportVariable");
+    const setFailedSpy = jest.spyOn(core, "setFailed");
+    const setOutputSpy = jest.spyOn(core, "setOutput");
+    Object.defineProperty(github, "context", {
+      value: {
+        payload: {
+          inputs: {
+            identifier: "https://www.rottentomatoes.com/tv/fleabag",
+            "media-status": "watched",
+            date: "2025-01-05",
+            rating: "⭐️⭐️⭐️⭐️⭐️",
+          },
+        },
+      },
+    });
+    await read();
+    expect(exportVariableSpy.mock.calls).toMatchInlineSnapshot(`[]`);
+    expect(setFailedSpy).not.toHaveBeenCalled();
+    expect(setOutputSpy.mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "media-status",
+        "watched",
+      ]
+    `);
+    expect(returnWriteFile.mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "my-media.json",
+        [
+          {
+            "contentRating": "TV-MA",
+            "dateFinished": "2025-01-05T00:00:00.000Z",
+            "description": "A dry-witted woman, known only as Fleabag, has no filter as she navigates life and love in London while trying to cope with tragedy. The angry, grief-riddled woman tries to heal while rejecting anyone who tries to help her, but Fleabag continues to keep up her bravado through it all. Comic actress Phoebe Waller-Bridge stars as the titular character on the series, which is based on Waller-Bridge's 2013 one-woman show of the same name.",
+            "format": "tvseries",
+            "genres": [
+              "Comedy",
+              "Drama",
+            ],
+            "identifier": "https://www.rottentomatoes.com/tv/fleabag",
+            "image": "tvseries-fleabag.jpg",
+            "rating": "⭐️⭐️⭐️⭐️⭐️",
+            "status": "watched",
+            "thumbnail": "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p13139614_b_v13_ad.jpg",
+            "title": "Fleabag",
+          },
+        ],
+      ]
+    `);
+  });
+
+  test("works, rotten tomatoes, want to watch, movie", async () => {
     const exportVariableSpy = jest.spyOn(core, "exportVariable");
     const setFailedSpy = jest.spyOn(core, "setFailed");
     const setOutputSpy = jest.spyOn(core, "setOutput");
