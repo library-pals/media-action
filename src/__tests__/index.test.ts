@@ -70,7 +70,6 @@ describe("index", () => {
           {
             "contentRating": "PG",
             "dateFinished": "2022-01-02T00:00:00.000Z",
-            "datePublished": "2025-01-31",
             "description": "Dog Man, half dog and half man, he is sworn to protect and serve as he doggedly pursues the feline supervillain Petey the Cat.",
             "format": "movie",
             "genres": [
