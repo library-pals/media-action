@@ -9,7 +9,7 @@ This GitHub action helps you track the tv shows or movies that you watch by upda
 To use this action, create a new workflow in `.github/workflows` and modify it as needed:
 
 ```yml
-name: media action
+name: Add to media log
 run-name: 🎬 ${{ inputs['media-status'] }} media ${{ inputs.identifier }}
 
 # Grant the action permission to write to the repository
