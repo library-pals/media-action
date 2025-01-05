@@ -145,10 +145,10 @@ describe("index", () => {
       value: {
         payload: {
           inputs: {
-            identifier: "https://www.rottentomatoes.com/tv/fleabag",
+            identifier:
+              "https://www.rottentomatoes.com/tv/what_we_do_in_the_shadows",
             "media-status": "watched",
             date: "2025-01-05",
-            rating: "⭐️⭐️⭐️⭐️⭐️",
           },
         },
       },
@@ -169,18 +169,17 @@ describe("index", () => {
           {
             "contentRating": "TV-MA",
             "dateFinished": "2025-01-05T00:00:00.000Z",
-            "description": "A dry-witted woman, known only as Fleabag, has no filter as she navigates life and love in London while trying to cope with tragedy. The angry, grief-riddled woman tries to heal while rejecting anyone who tries to help her, but Fleabag continues to keep up her bravado through it all. Comic actress Phoebe Waller-Bridge stars as the titular character on the series, which is based on Waller-Bridge's 2013 one-woman show of the same name.",
+            "description": "A look at the lives of four vampires who've lived together for hundreds of years on Staten Island. The self-appointed leader of the group is Nandor the Relentless, a warrior and conqueror from the Ottoman Empire. Then there's the British vampire Laszlo -- a bit of a rogue and a dandy and a fop, he might say. He's a lover of mischief and a soirée, but not as much as he loves seeing Nandor fail in every attempt. And then there's Nadja: the seductress, the temptress, the vampiric Bonnie to Laszlo's Clyde. Also cohabiting in the vampire household is Guillermo, Nandor's familiar; Colin Robinson, an energy vampire and day-walker of sorts -- he feasts on humans, but not on their blood.",
             "format": "tvseries",
             "genres": [
               "Comedy",
-              "Drama",
+              "Horror",
             ],
-            "identifier": "https://www.rottentomatoes.com/tv/fleabag",
-            "image": "tvseries-fleabag.jpg",
-            "rating": "⭐️⭐️⭐️⭐️⭐️",
+            "identifier": "https://www.rottentomatoes.com/tv/what_we_do_in_the_shadows",
+            "image": "tvseries-what-we-do-in-the-shadows.jpg",
             "status": "watched",
-            "thumbnail": "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p13139614_b_v13_ad.jpg",
-            "title": "Fleabag",
+            "thumbnail": "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p15501789_b_v13_as.jpg",
+            "title": "What We Do in the Shadows",
           },
         ],
       ]
