@@ -1,4 +1,4 @@
-name: media action
+name: Add to media log
 run-name: 🎬 ${{ inputs['media-status'] }} media ${{ inputs.identifier }}
 
 # Grant the action permission to write to the repository

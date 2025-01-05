@@ -29,7 +29,7 @@ export function getMediaStatus({
 }
 
 function transformDate(date?: string): string {
-  const dateValue = new Date(date ?? "");
+  const dateValue = date ? new Date(date) : new Date();
   return dateValue.toISOString();
 }
 
