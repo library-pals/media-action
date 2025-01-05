@@ -131,6 +131,8 @@ To trigger the action, [create a workflow dispatch event](https://docs.github.co
 }
 ```
 
+
+
 ## Action outputs
 
 - `now-watching`: The current media you are watching.
