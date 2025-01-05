@@ -16,5 +16,21 @@
     "format": "tvseries",
     "contentRating": "TV-MA",
     "image": "tvseries-what-we-do-in-the-shadows.jpg"
+  },
+  {
+    "identifier": "https://www.rottentomatoes.com/tv/fleabag",
+    "status": "watched",
+    "dateFinished": "2025-01-05T23:20:35.058Z",
+    "title": "Fleabag",
+    "description": "A dry-witted woman, known only as Fleabag, has no filter as she navigates life and love in London while trying to cope with tragedy. The angry, grief-riddled woman tries to heal while rejecting anyone who tries to help her, but Fleabag continues to keep up her bravado through it all. Comic actress Phoebe Waller-Bridge stars as the titular character on the series, which is based on Waller-Bridge's 2013 one-woman show of the same name.",
+    "thumbnail": "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p13139614_b_v13_ad.jpg",
+    "genres": [
+      "Comedy",
+      "Drama"
+    ],
+    "format": "tvseries",
+    "contentRating": "TV-MA",
+    "rating": "⭐️⭐️⭐️⭐️⭐️",
+    "image": "tvseries-fleabag.jpg"
   }
 ]
