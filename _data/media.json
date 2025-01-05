@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "identifier": "https://www.imdb.com/title/tt7908628",
+    "dateStarted": "2025-01-05T19:15:22.503Z",
+    "status": "watching",
+    "rating": "unrated",
+    "title": "What We Do in the Shadows",
+    "description": "A look into the nightly lives of four vampires who have lived together on Staten Island for over a century.",
+    "datePublished": "2019-03-27",
+    "thumbnail": "https://m.media-amazon.com/images/M/MV5BNDhiYTVlYjUtMDc4OC00NzBmLWE5YTYtNDBjZDc4MzM3YzNmXkEyXkFqcGc@._V1_.jpg",
+    "genres": [
+      "Comedy",
+      "Fantasy",
+      "Horror"
+    ],
+    "format": "tvseries",
+    "contentRating": "TV-MA",
+    "image": "tvseries-what-we-do-in-the-shadows.jpg"
+  }
+]
