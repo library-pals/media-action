@@ -4,16 +4,15 @@ This GitHub action helps you track the tv shows or movies that you watch by upda
 
 [Create a workflow dispatch event](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event) with information about the media.
 
-Given a [data provider identifier](#data-providers), the action will fetch the media's metadata and commit the change in your repository, always sorting by the date you finished the book.
+Given a [data provider identifier](#data-providers), the action will fetch the media's metadata and commit the change in your repository, always sorting by the date you finished the media.
 
 ## Data providers
 
 Depending on the type of `identifier` you submit to the action, it will use the following data provider.
 
-| Identifier | Provider | Example `identifier` value |
-| ---------- | -------- | -------------------------- |
-
-| IMDb | [IMDb](https://www.imdb.com/) via meta scraping | `https://www.imdb.com/title/tt7908628` |
+| Identifier | Provider                                        | Example `identifier` value             |
+| ---------- | ----------------------------------------------- | -------------------------------------- |
+| IMDb       | [IMDb](https://www.imdb.com/) via meta scraping | `https://www.imdb.com/title/tt7908628` |
 
 ## Media lifecycle
 
