@@ -61,6 +61,18 @@ describe("index", () => {
       date: "2025-01-05",
     },
     {
+      description: "rotten tomatoes, tv season",
+      identifier: "https://www.rottentomatoes.com/tv/the_bear/s03",
+      mediaStatus: "watching",
+      date: "2025-01-05",
+    },
+    {
+      description: "rotten tomatoes, tv episode",
+      identifier: "https://www.rottentomatoes.com/tv/the_bear/s03/e01",
+      mediaStatus: "watched",
+      date: "2025-01-05",
+    },
+    {
       description: "rotten tomatoes, movie",
       identifier: "https://www.rottentomatoes.com/m/dog_man",
       mediaStatus: "want to watch",
