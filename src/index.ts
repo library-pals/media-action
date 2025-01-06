@@ -13,6 +13,7 @@ import {
 
 import { ImdbProvider } from "./providers/imdb";
 import { RottenTomatoesProvider } from "./providers/rotten-tomatoes";
+import { validatePayload } from "./validate-payload";
 
 export const providerAction = [
   {
@@ -28,6 +29,12 @@ export const providerAction = [
 export async function read() {
   try {
     const payload = github.context.payload.inputs as MediaPayload;
+    // Validate payload
+    const { success, message } = validatePayload(payload);
+    if (!success) {
+      setFailed(message);
+      return;
+    }
     const {
       identifier: inputIdentifier,
       date,
