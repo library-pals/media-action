@@ -96,7 +96,7 @@ jobs:
         id: media-log
         uses: library-pals/media-action@v0.1.0
 
-      - name: Download the book thumbnail
+      - name: Download the media thumbnail
         if: steps.media-log.outputs.media-thumbnail != ''
         run: curl "${{ steps.media-log.outputs.media-thumbnail-url }}" -o "img/${{ steps.media-log.outputs.media-thumbnail }}"
 

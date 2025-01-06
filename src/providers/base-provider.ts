@@ -2,6 +2,7 @@ import ogs from "open-graph-scraper";
 import { NewMedia, MediaParams } from "../types";
 import { OgObject } from "open-graph-scraper/types/lib/types";
 import { TVSeries, Movie } from "schema-dts";
+import { warning } from "@actions/core";
 
 export class BaseProvider {
   protected parsedOgMetadata: Partial<NewMedia> = {};
@@ -72,29 +73,29 @@ export class BaseProvider {
     title: string = "",
     thumbnail: string = "",
     type: string = ""
-  ): string {
+  ): string | undefined {
     if (!thumbnail) return "";
 
-    const url = new URL(thumbnail);
-    const pathname = url.pathname;
-    let thumbnailExtension = pathname.includes(".")
-      ? pathname.split(".").pop()?.toLowerCase()
-      : "";
+    try {
+      const url = new URL(thumbnail);
+      const pathname = url.pathname;
+      let thumbnailExtension = pathname.includes(".")
+        ? pathname.split(".").pop()?.toLowerCase()
+        : "";
 
-    const imageExtensions = new Set(["jpg", "jpeg", "png", "gif"]);
-    if (!thumbnailExtension || !imageExtensions.has(thumbnailExtension)) {
-      thumbnailExtension = "jpg"; // Default to JPG if no valid extension is found
+      const imageExtensions = new Set(["jpg", "jpeg", "png", "gif"]);
+      if (!thumbnailExtension || !imageExtensions.has(thumbnailExtension)) {
+        thumbnailExtension = "jpg"; // Default to JPG if no valid extension is found
+      }
+
+      const formattedTitle = title.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
+      const relativePath = [type, formattedTitle].filter(Boolean).join("-");
+
+      return `${relativePath}.${thumbnailExtension}`;
+    } catch (error) {
+      warning("Invalid URL:", error);
+      return;
     }
-
-    const formattedTitle = title.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
-    const relativePath: string[] = [];
-
-    if (type) relativePath.push(type);
-    if (type && formattedTitle) relativePath.push("-");
-    if (formattedTitle) relativePath.push(formattedTitle);
-    if (thumbnailExtension) relativePath.push(`.${thumbnailExtension}`);
-
-    return relativePath.join("");
   }
 
   protected parseOg(result: OgObject): {
@@ -115,16 +116,12 @@ export class BaseProvider {
     return value?.toString() ?? undefined;
   }
 
-  protected parseCategories(genre: unknown): string[] {
+  protected parseGenres(genre: unknown): string[] {
     if (!genre) return [];
-    if (typeof genre === "string" && genre.includes("&amp;")) {
-      return genre.split("&amp;").map((a: string) => a.trim());
+    if (Array.isArray(genre)) {
+      return genre.map((g) => g.toString());
     }
-    return genre
-      .toString()
-      .split(",")
-      .map((g: string) => g.trim())
-      .filter((g: string) => g);
+    return [];
   }
 
   protected parseJsonLd(result: OgObject): Partial<NewMedia> {
@@ -141,7 +138,7 @@ export class BaseProvider {
       title: this.safeToString(schema.name),
       description: this.safeToString(schema.description),
       thumbnail: this.safeToString(schema.image),
-      genres: this.parseCategories(schema.genre),
+      genres: this.parseGenres(schema.genre),
       format: schema["@type"].toLocaleLowerCase(),
       contentRating: this.safeToString(schema.contentRating),
     };
