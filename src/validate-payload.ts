@@ -40,7 +40,7 @@ export function validatePayload(payload: MediaPayload): {
   if (!payload["media-status"] || !isMediaStatus(payload["media-status"])) {
     return {
       success: false,
-      message: `Invalid \`media-status\` in payload: "${payload["media-status"]}". Choose from: "want to watch", "watching", "watched".`,
+      message: `Invalid \`media-status\` in payload: ${payload["media-status"]}. Choose from: "want to watch", "watching", "watched".`,
     };
   }
 
@@ -52,11 +52,11 @@ function isMediaStatus(status: string): status is MediaStatus {
 }
 
 /** make sure date is in YYYY-MM-DD format */
-export function dateFormat(date: string): boolean {
+export function isValidDateFormat(date: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(date);
 }
 
 /** make sure date value is a valid date */
 export function isDate(date: string): boolean {
-  return !isNaN(Date.parse(date)) && dateFormat(date);
+  return !isNaN(Date.parse(date)) && isValidDateFormat(date);
 }
