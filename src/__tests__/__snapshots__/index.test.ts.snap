@@ -123,3 +123,61 @@ exports[`index rotten tomatoes, tv 2`] = `
   ],
 ]
 `;
+
+exports[`index rotten tomatoes, tv episode 1`] = `
+[
+  "media-status",
+  "watched",
+]
+`;
+
+exports[`index rotten tomatoes, tv episode 2`] = `
+[
+  "my-media.json",
+  [
+    {
+      "dateFinished": "2025-01-05T00:00:00.000Z",
+      "description": "The next day and the days that led to it.",
+      "format": "tvepisode",
+      "genres": [
+        "Comedy",
+        "Drama",
+      ],
+      "identifier": "https://www.rottentomatoes.com/tv/the_bear/s03/e01",
+      "image": "tvepisode-the-bear-season-3-tomorrow.gif",
+      "status": "watched",
+      "thumbnail": "https://images.fandango.com/cms/assets/5d84d010-59b1-11ea-b175-791e911be53d--rt-poster-defaultgif.gif",
+      "title": "The Bear, Season 3, Tomorrow",
+    },
+  ],
+]
+`;
+
+exports[`index rotten tomatoes, tv season 1`] = `
+[
+  "media-status",
+  "watching",
+]
+`;
+
+exports[`index rotten tomatoes, tv season 2`] = `
+[
+  "my-media.json",
+  [
+    {
+      "dateStarted": "2025-01-05T00:00:00.000Z",
+      "description": "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop after a heartbreaking death in his family. A world away from what he's used to, Carmy must balance the soul-crushing realities of small business ownership, his strong-willed and recalcitrant kitchen staff and his strained familial relationships, all while grappling with the impact of his brother's suicide. As Carmy fights to transform both the shop and himself, he works alongside a rough-around-the-edges kitchen crew that ultimately reveals itself as his chosen family.",
+      "format": "tvseason",
+      "genres": [
+        "Comedy",
+        "Drama",
+      ],
+      "identifier": "https://www.rottentomatoes.com/tv/the_bear/s03",
+      "image": "tvseason-the-bear-season-3.jpg",
+      "status": "watching",
+      "thumbnail": "https://resizing.flixster.com/VWRmuGWA9qZtOSVUywPIRcSYZ2w=/ems.cHJkLWVtcy1hc3NldHMvdHZzZWFzb24vZDM3YjRjMmMtNThlYy00MmI3LWI2NDQtMTgxZTg3NWY5ZGRmLmpwZw==",
+      "title": "The Bear, Season 3",
+    },
+  ],
+]
+`;

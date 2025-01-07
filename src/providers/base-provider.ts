@@ -1,8 +1,10 @@
 import ogs from "open-graph-scraper";
 import { NewMedia, MediaParams } from "../types";
 import { OgObject } from "open-graph-scraper/types/lib/types";
-import { TVSeries, Movie } from "schema-dts";
+import { TVSeries, Movie, TVSeason, TVEpisode } from "schema-dts";
 import { warning } from "@actions/core";
+
+type MediaTypes = TVSeries | TVSeason | TVEpisode | Movie;
 
 export class BaseProvider {
   protected parsedOgMetadata: Partial<NewMedia> = {};
@@ -88,7 +90,11 @@ export class BaseProvider {
         thumbnailExtension = "jpg"; // Default to JPG if no valid extension is found
       }
 
-      const formattedTitle = title.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
+      const formattedTitle = title
+        .toLowerCase()
+        .replace(/[,:]/g, "")
+        .replace(/[^a-zA-Z0-9]/g, "-");
+
       const relativePath = [type, formattedTitle].filter(Boolean).join("-");
 
       return `${relativePath}.${thumbnailExtension}`;
@@ -129,18 +135,52 @@ export class BaseProvider {
       return {};
     }
 
-    const schema = result.jsonLD[0] as TVSeries | Movie;
+    const schema = result.jsonLD[0] as MediaTypes;
     if (!schema) {
       return {};
     }
 
     return {
-      title: this.safeToString(schema.name),
+      title: this.getModifiedTitle(schema),
       description: this.safeToString(schema.description),
       thumbnail: this.safeToString(schema.image),
       genres: this.parseGenres(schema.genre),
       format: schema["@type"].toLocaleLowerCase(),
       contentRating: this.safeToString(schema.contentRating),
     };
+  }
+
+  protected getModifiedTitle(schema: MediaTypes): string | undefined {
+    const mediaTitle = this.safeToString(schema.name);
+    const seasonName = this.getSeasonName(schema);
+    const seriesName = this.getSeriesName(schema);
+
+    return [seriesName, seasonName, mediaTitle].filter(Boolean).join(", ");
+  }
+
+  protected getSeasonName(schema: MediaTypes): string | undefined {
+    if (
+      schema["@type"] === "TVEpisode" &&
+      schema.partOfSeason &&
+      typeof schema.partOfSeason === "object"
+    ) {
+      return this.safeToString(
+        (schema.partOfSeason as { name?: unknown }).name
+      );
+    }
+    return undefined;
+  }
+
+  protected getSeriesName(schema: MediaTypes): string | undefined {
+    if (
+      (schema["@type"] === "TVEpisode" || schema["@type"] === "TVSeason") &&
+      schema.partOfSeries &&
+      typeof schema.partOfSeries === "object"
+    ) {
+      return this.safeToString(
+        (schema.partOfSeries as { name?: unknown }).name
+      );
+    }
+    return undefined;
   }
 }
