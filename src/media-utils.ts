@@ -37,28 +37,27 @@ export function checkOutMedia(
   mediaParams: MediaParams,
   library: NewMedia[]
 ): boolean {
-  const { inputIdentifier } = mediaParams;
+  const { identifier } = mediaParams;
   if (library === undefined || library.length === 0) return false;
-  if (library.filter((media) => lookUp(media, inputIdentifier)).length === 0)
+  if (library.filter((media) => lookUp(media, identifier)).length === 0)
     return false;
   else return true;
 }
 
 export function lookUp(
   media: NewMedia,
-  inputIdentifier: MediaParams["inputIdentifier"]
+  identifier: MediaParams["identifier"]
 ): boolean {
-  return media.identifier === inputIdentifier;
+  return media.identifier === identifier;
 }
 
 export async function updateMedia(
   mediaParams: MediaParams,
   currentMedia: NewMedia[]
 ): Promise<NewMedia[]> {
-  const { inputIdentifier, dateType, status, notes, rating, tags } =
-    mediaParams;
+  const { identifier, dateType, status, notes, rating, tags } = mediaParams;
   return currentMedia.reduce((arr: NewMedia[], media) => {
-    const thisMedia = lookUp(media, inputIdentifier);
+    const thisMedia = lookUp(media, identifier);
     if (thisMedia) {
       setOutput("media-title", media.title);
       media = {
@@ -91,7 +90,7 @@ export async function handleNewMedia({
   mediaStatus: string;
 }): Promise<void> {
   const provider = providerAction.find(({ check }) =>
-    check(mediaParams.inputIdentifier)
+    check(mediaParams.identifier)
   );
   if (!provider) {
     throw new Error("No provider found for this URL");
@@ -99,7 +98,7 @@ export async function handleNewMedia({
   const newMedia = await provider.action.fetchMedia(mediaParams);
 
   if (!newMedia) {
-    throw new Error(`Failed to fetch media for URL: ${mediaParams.inputIdentifier}`);
+    throw new Error(`Failed to fetch media for URL: ${mediaParams.identifier}`);
   }
 
   library.push(newMedia);

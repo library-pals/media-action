@@ -10,8 +10,7 @@ export type MediaPayload = {
 };
 
 export type MediaParams = {
-  filename: string;
-  inputIdentifier: string;
+  identifier: string;
   dateType: DateTypes;
   notes: string;
   status: MediaStatus;

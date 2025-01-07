@@ -35,54 +35,55 @@ export async function read() {
       setFailed(message);
       return;
     }
-    const {
-      identifier: inputIdentifier,
-      date,
-      "media-status": mediaStatus,
-      notes,
-      rating,
-      tags,
-    } = payload;
-    // Set inputs
-    const filename: ActionInputs["filename"] = getInput("filename");
 
-    const dateType = getMediaStatus({
-      date,
-      mediaStatus,
-    });
-    setOutput("media-status", mediaStatus);
+    const mediaParams = extractMediaParams(payload);
+    const filename: ActionInputs["filename"] = getInput("filename");
+    setOutput("media-status", mediaParams.status);
 
     let library = await returnReadFile(filename);
 
-    const mediaParams: MediaParams = {
-      filename,
-      inputIdentifier,
-      dateType,
-      notes,
-      status: mediaStatus,
-      rating,
-      ...(tags && { tags: toArray(tags) }),
-    };
-
-    if (mediaStatus !== "summary") {
-      const mediaExists = checkOutMedia(mediaParams, library);
-
-      if (mediaExists) {
-        library = await updateMedia(mediaParams, library);
-      } else {
-        await handleNewMedia({ mediaParams, library, mediaStatus });
-      }
-
+    if (mediaParams.status !== "summary") {
+      library = await processMedia(mediaParams, library);
       library = sortByDate(library);
-
       await returnWriteFile(filename, library);
     }
 
-    /*await summary
-      .addRaw(summaryMarkdown(library, dateType, mediaStatus))
-      .write();*/
+    // await summary.addRaw(summaryMarkdown(library, dateType, mediaStatus)).write();
   } catch (error) {
-    setFailed(error);
+    setFailed(error.message);
+  }
+}
+
+function extractMediaParams(payload: MediaPayload): MediaParams {
+  const {
+    identifier,
+    date,
+    "media-status": status,
+    notes,
+    rating,
+    tags,
+  } = payload;
+  return {
+    identifier,
+    dateType: getMediaStatus({ date, mediaStatus: status }),
+    notes,
+    status,
+    rating,
+    ...(tags && { tags: toArray(tags) }),
+  };
+}
+
+async function processMedia(mediaParams: MediaParams, library) {
+  const mediaExists = checkOutMedia(mediaParams, library);
+  if (mediaExists) {
+    return await updateMedia(mediaParams, library);
+  } else {
+    await handleNewMedia({
+      mediaParams,
+      library,
+      mediaStatus: mediaParams.status,
+    });
+    return library;
   }
 }
 
