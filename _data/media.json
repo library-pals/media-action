@@ -32,20 +32,5 @@
     "contentRating": "TV-MA",
     "rating": "⭐️⭐️⭐️⭐️⭐️",
     "image": "tvseries-fleabag.jpg"
-  },
-  {
-    "identifier": "https://www.rottentomatoes.com/tv/the_bear/s03",
-    "status": "want to watch",
-    "dateAdded": "2025-01-06T23:26:55.899Z",
-    "title": "Season 3",
-    "description": "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop after a heartbreaking death in his family. A world away from what he's used to, Carmy must balance the soul-crushing realities of small business ownership, his strong-willed and recalcitrant kitchen staff and his strained familial relationships, all while grappling with the impact of his brother's suicide. As Carmy fights to transform both the shop and himself, he works alongside a rough-around-the-edges kitchen crew that ultimately reveals itself as his chosen family.",
-    "thumbnail": "https://resizing.flixster.com/VWRmuGWA9qZtOSVUywPIRcSYZ2w=/ems.cHJkLWVtcy1hc3NldHMvdHZzZWFzb24vZDM3YjRjMmMtNThlYy00MmI3LWI2NDQtMTgxZTg3NWY5ZGRmLmpwZw==",
-    "genres": [
-      "Comedy",
-      "Drama"
-    ],
-    "format": "tvseason",
-    "rating": "unrated",
-    "image": "tvseason-season-3.jpg"
   }
 ]
