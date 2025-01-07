@@ -3,7 +3,6 @@ import { NewMedia, MediaParams } from "../types";
 import { OgObject } from "open-graph-scraper/types/lib/types";
 import { TVSeries, Movie, TVSeason, TVEpisode } from "schema-dts";
 import { warning } from "@actions/core";
-// import { writeFileSync } from "fs";
 
 export class BaseProvider {
   protected parsedOgMetadata: Partial<NewMedia> = {};
@@ -45,8 +44,6 @@ export class BaseProvider {
 
       this.parsedOgMetadata = this.parseOg(result);
       this.parsedJsonLDMetadata = this.parseJsonLd(result);
-
-      // writeFileSync(`${this.title}.json`, JSON.stringify(result, null, 2));
 
       const image = this.setImage(this.title, this.thumbnail, this.format);
 
@@ -93,9 +90,9 @@ export class BaseProvider {
 
       const formattedTitle = title
         .toLowerCase()
-        .replace(/,/g, "")
-        .replace(/:/g, "")
+        .replace(/[,:]/g, "")
         .replace(/[^a-zA-Z0-9]/g, "-");
+
       const relativePath = [type, formattedTitle].filter(Boolean).join("-");
 
       return `${relativePath}.${thumbnailExtension}`;
