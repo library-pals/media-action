@@ -24,7 +24,7 @@ exports[`index imdb, movie 2`] = `
       "identifier": "https://www.imdb.com/title/tt10954718/",
       "image": "movie-dog-man.jpg",
       "status": "watched",
-      "thumbnail": "https://m.media-amazon.com/images/M/MV5BZTBiOTViYzktMTM5Mi00ZTdmLWE0ZjQtNDk3NTc3NmM5Y2I3XkEyXkFqcGc@._V1_.jpg",
+      "thumbnail": "https://m.media-amazon.com/images/M/MV5BNDVlZGQyM2MtNjA2OS00MjdkLThiNDQtZTYzMTA1MGU3M2M0XkEyXkFqcGc@._V1_.jpg",
       "title": "Dog Man",
     },
   ],
@@ -76,7 +76,7 @@ exports[`index rotten tomatoes, movie 2`] = `
     {
       "contentRating": "PG",
       "dateAdded": "2025-01-05T00:00:00.000Z",
-      "description": "When a faithful police dog and his human police officer owner are injured together on the job, a harebrained but life-saving surgery fuses the two of them together and Dog Man is born. Dog Man is sworn to protect and serve--and fetch, sit and roll over. As Dog Man embraces his new identity and strives to impress his Chief (Lil Rel Howery, Get Out, Free Guy), he must stop the pretty evil plots of feline supervillain Petey the Cat (Pete Davidson; Saturday Night Live, The King of Staten Island). Petey's latest plan is to clone himself, creating the kitten Lil Petey, to double his ability to do crime stuff. Things get complicated, though, when Lil Petey forges an unexpected bond with Dog Man. When Lil Petey falls into the clutches of a common enemy, Dog Man and Petey reluctantly join forces in an action-packed race against time to rescue the young kitten. In the process, they discover the power of family (and kittens!) to bring even the most hostile foes together.",
+      "description": "Discover reviews, ratings, and trailers for Dog Man on Rotten Tomatoes. Stay updated with critic and audience scores today!",
       "format": "movie",
       "genres": [
         "Kids & Family",
@@ -108,7 +108,7 @@ exports[`index rotten tomatoes, tv 2`] = `
     {
       "contentRating": "TV-MA",
       "dateFinished": "2025-01-05T00:00:00.000Z",
-      "description": "A look at the lives of four vampires who've lived together for hundreds of years on Staten Island. The self-appointed leader of the group is Nandor the Relentless, a warrior and conqueror from the Ottoman Empire. Then there's the British vampire Laszlo -- a bit of a rogue and a dandy and a fop, he might say. He's a lover of mischief and a soirée, but not as much as he loves seeing Nandor fail in every attempt. And then there's Nadja: the seductress, the temptress, the vampiric Bonnie to Laszlo's Clyde. Also cohabiting in the vampire household is Guillermo, Nandor's familiar; Colin Robinson, an energy vampire and day-walker of sorts -- he feasts on humans, but not on their blood.",
+      "description": "Discover reviews, ratings, and trailers for What We Do in the Shadows on Rotten Tomatoes. Stay updated with critic and audience scores today!",
       "format": "tvseries",
       "genres": [
         "Comedy",
@@ -137,7 +137,7 @@ exports[`index rotten tomatoes, tv episode 2`] = `
   [
     {
       "dateFinished": "2025-01-05T00:00:00.000Z",
-      "description": "The next day and the days that led to it.",
+      "description": "Discover reviews, ratings, and trailers for The Bear: Season 3, Episode 1 on Rotten Tomatoes. Stay updated with critic and audience scores today!",
       "format": "tvepisode",
       "genres": [
         "Comedy",
@@ -166,7 +166,7 @@ exports[`index rotten tomatoes, tv season 2`] = `
   [
     {
       "dateStarted": "2025-01-05T00:00:00.000Z",
-      "description": "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop after a heartbreaking death in his family. A world away from what he's used to, Carmy must balance the soul-crushing realities of small business ownership, his strong-willed and recalcitrant kitchen staff and his strained familial relationships, all while grappling with the impact of his brother's suicide. As Carmy fights to transform both the shop and himself, he works alongside a rough-around-the-edges kitchen crew that ultimately reveals itself as his chosen family.",
+      "description": "Discover reviews, ratings, and trailers for The Bear: Season 3 on Rotten Tomatoes. Stay updated with critic and audience scores today!",
       "format": "tvseason",
       "genres": [
         "Comedy",
