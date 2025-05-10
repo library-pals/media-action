@@ -1871,6 +1871,7 @@ class Context {
         this.action = process.env.GITHUB_ACTION;
         this.actor = process.env.GITHUB_ACTOR;
         this.job = process.env.GITHUB_JOB;
+        this.runAttempt = parseInt(process.env.GITHUB_RUN_ATTEMPT, 10);
         this.runNumber = parseInt(process.env.GITHUB_RUN_NUMBER, 10);
         this.runId = parseInt(process.env.GITHUB_RUN_ID, 10);
         this.apiUrl = (_a = process.env.GITHUB_API_URL) !== null && _a !== void 0 ? _a : `https://api.github.com`;
@@ -3527,11 +3528,11 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
+var index_exports = {};
+__export(index_exports, {
   Octokit: () => Octokit
 });
-module.exports = __toCommonJS(dist_src_exports);
+module.exports = __toCommonJS(index_exports);
 var import_universal_user_agent = __nccwpck_require__(3843);
 var import_before_after_hook = __nccwpck_require__(2732);
 var import_request = __nccwpck_require__(8636);
@@ -3539,7 +3540,7 @@ var import_graphql = __nccwpck_require__(7);
 var import_auth_token = __nccwpck_require__(7864);
 
 // pkg/dist-src/version.js
-var VERSION = "5.0.2";
+var VERSION = "5.2.1";
 
 // pkg/dist-src/index.js
 var noop = () => {
@@ -3705,7 +3706,7 @@ module.exports = __toCommonJS(dist_src_exports);
 var import_universal_user_agent = __nccwpck_require__(3843);
 
 // pkg/dist-src/version.js
-var VERSION = "9.0.4";
+var VERSION = "9.0.6";
 
 // pkg/dist-src/defaults.js
 var userAgent = `octokit-endpoint.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`;
@@ -3810,9 +3811,9 @@ function addQueryParameters(url, parameters) {
 }
 
 // pkg/dist-src/util/extract-url-variable-names.js
-var urlVariableRegex = /\{[^}]+\}/g;
+var urlVariableRegex = /\{[^{}}]+\}/g;
 function removeNonChars(variableName) {
-  return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
+  return variableName.replace(/(?:^\W+)|(?:(?<!\W)\W+$)/g, "").split(/,/);
 }
 function extractUrlVariableNames(url) {
   const matches = url.match(urlVariableRegex);
@@ -3998,7 +3999,7 @@ function parse(options) {
     }
     if (url.endsWith("/graphql")) {
       if (options.mediaType.previews?.length) {
-        const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
+        const previewsFromAcceptHeader = headers.accept.match(/(?<![\w-])[\w-]+(?=-preview)/g) || [];
         headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
           const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
           return `application/vnd.github.${preview}-preview${format}`;
@@ -4078,18 +4079,18 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
+var index_exports = {};
+__export(index_exports, {
   GraphqlResponseError: () => GraphqlResponseError,
   graphql: () => graphql2,
   withCustomRequest: () => withCustomRequest
 });
-module.exports = __toCommonJS(dist_src_exports);
+module.exports = __toCommonJS(index_exports);
 var import_request3 = __nccwpck_require__(8636);
 var import_universal_user_agent = __nccwpck_require__(3843);
 
 // pkg/dist-src/version.js
-var VERSION = "7.0.2";
+var VERSION = "7.1.1";
 
 // pkg/dist-src/with-defaults.js
 var import_request2 = __nccwpck_require__(8636);
@@ -4137,8 +4138,7 @@ function graphql(request2, query, options) {
       );
     }
     for (const key in options) {
-      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key))
-        continue;
+      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key)) continue;
       return Promise.reject(
         new Error(
           `[@octokit/graphql] "${key}" cannot be used as variable name`
@@ -4245,7 +4245,7 @@ __export(dist_src_exports, {
 module.exports = __toCommonJS(dist_src_exports);
 
 // pkg/dist-src/version.js
-var VERSION = "9.1.5";
+var VERSION = "9.2.2";
 
 // pkg/dist-src/normalize-paginated-list-response.js
 function normalizePaginatedListResponse(response) {
@@ -4293,7 +4293,7 @@ function iterator(octokit, route, parameters) {
           const response = await requestMethod({ method, url, headers });
           const normalizedResponse = normalizePaginatedListResponse(response);
           url = ((normalizedResponse.headers.link || "").match(
-            /<([^>]+)>;\s*rel="next"/
+            /<([^<>]+)>;\s*rel="next"/
           ) || [])[1];
           return { value: normalizedResponse };
         } catch (error) {
@@ -4406,6 +4406,8 @@ var paginatingEndpoints = [
   "GET /orgs/{org}/members/{username}/codespaces",
   "GET /orgs/{org}/migrations",
   "GET /orgs/{org}/migrations/{migration_id}/repositories",
+  "GET /orgs/{org}/organization-roles/{role_id}/teams",
+  "GET /orgs/{org}/organization-roles/{role_id}/users",
   "GET /orgs/{org}/outside_collaborators",
   "GET /orgs/{org}/packages",
   "GET /orgs/{org}/packages/{package_type}/{package_name}/versions",
@@ -4641,7 +4643,7 @@ __export(dist_src_exports, {
 module.exports = __toCommonJS(dist_src_exports);
 
 // pkg/dist-src/version.js
-var VERSION = "10.2.0";
+var VERSION = "10.4.1";
 
 // pkg/dist-src/generated/endpoints.js
 var Endpoints = {
@@ -4768,6 +4770,9 @@ var Endpoints = {
       "GET /repos/{owner}/{repo}/actions/permissions/selected-actions"
     ],
     getArtifact: ["GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"],
+    getCustomOidcSubClaimForRepo: [
+      "GET /repos/{owner}/{repo}/actions/oidc/customization/sub"
+    ],
     getEnvironmentPublicKey: [
       "GET /repositories/{repository_id}/environments/{environment_name}/secrets/public-key"
     ],
@@ -4920,6 +4925,9 @@ var Endpoints = {
     setCustomLabelsForSelfHostedRunnerForRepo: [
       "PUT /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"
     ],
+    setCustomOidcSubClaimForRepo: [
+      "PUT /repos/{owner}/{repo}/actions/oidc/customization/sub"
+    ],
     setGithubActionsDefaultWorkflowPermissionsOrganization: [
       "PUT /orgs/{org}/actions/permissions/workflow"
     ],
@@ -4989,6 +4997,7 @@ var Endpoints = {
     listWatchersForRepo: ["GET /repos/{owner}/{repo}/subscribers"],
     markNotificationsAsRead: ["PUT /notifications"],
     markRepoNotificationsAsRead: ["PUT /repos/{owner}/{repo}/notifications"],
+    markThreadAsDone: ["DELETE /notifications/threads/{thread_id}"],
     markThreadAsRead: ["PATCH /notifications/threads/{thread_id}"],
     setRepoSubscription: ["PUT /repos/{owner}/{repo}/subscription"],
     setThreadSubscription: [
@@ -5265,10 +5274,10 @@ var Endpoints = {
     updateForAuthenticatedUser: ["PATCH /user/codespaces/{codespace_name}"]
   },
   copilot: {
-    addCopilotForBusinessSeatsForTeams: [
+    addCopilotSeatsForTeams: [
       "POST /orgs/{org}/copilot/billing/selected_teams"
     ],
-    addCopilotForBusinessSeatsForUsers: [
+    addCopilotSeatsForUsers: [
       "POST /orgs/{org}/copilot/billing/selected_users"
     ],
     cancelCopilotSeatAssignmentForTeams: [
@@ -5581,9 +5590,23 @@ var Endpoints = {
       }
     ]
   },
+  oidc: {
+    getOidcCustomSubTemplateForOrg: [
+      "GET /orgs/{org}/actions/oidc/customization/sub"
+    ],
+    updateOidcCustomSubTemplateForOrg: [
+      "PUT /orgs/{org}/actions/oidc/customization/sub"
+    ]
+  },
   orgs: {
     addSecurityManagerTeam: [
       "PUT /orgs/{org}/security-managers/teams/{team_slug}"
+    ],
+    assignTeamToOrgRole: [
+      "PUT /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}"
+    ],
+    assignUserToOrgRole: [
+      "PUT /orgs/{org}/organization-roles/users/{username}/{role_id}"
     ],
     blockUser: ["PUT /orgs/{org}/blocks/{username}"],
     cancelInvitation: ["DELETE /orgs/{org}/invitations/{invitation_id}"],
@@ -5593,6 +5616,7 @@ var Endpoints = {
     convertMemberToOutsideCollaborator: [
       "PUT /orgs/{org}/outside_collaborators/{username}"
     ],
+    createCustomOrganizationRole: ["POST /orgs/{org}/organization-roles"],
     createInvitation: ["POST /orgs/{org}/invitations"],
     createOrUpdateCustomProperties: ["PATCH /orgs/{org}/properties/schema"],
     createOrUpdateCustomPropertiesValuesForRepos: [
@@ -5603,6 +5627,9 @@ var Endpoints = {
     ],
     createWebhook: ["POST /orgs/{org}/hooks"],
     delete: ["DELETE /orgs/{org}"],
+    deleteCustomOrganizationRole: [
+      "DELETE /orgs/{org}/organization-roles/{role_id}"
+    ],
     deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
     enableOrDisableSecurityProductOnAllOrgRepos: [
       "POST /orgs/{org}/{security_product}/{enablement}"
@@ -5614,6 +5641,7 @@ var Endpoints = {
     ],
     getMembershipForAuthenticatedUser: ["GET /user/memberships/orgs/{org}"],
     getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
+    getOrgRole: ["GET /orgs/{org}/organization-roles/{role_id}"],
     getWebhook: ["GET /orgs/{org}/hooks/{hook_id}"],
     getWebhookConfigForOrg: ["GET /orgs/{org}/hooks/{hook_id}/config"],
     getWebhookDelivery: [
@@ -5629,6 +5657,12 @@ var Endpoints = {
     listInvitationTeams: ["GET /orgs/{org}/invitations/{invitation_id}/teams"],
     listMembers: ["GET /orgs/{org}/members"],
     listMembershipsForAuthenticatedUser: ["GET /user/memberships/orgs"],
+    listOrgRoleTeams: ["GET /orgs/{org}/organization-roles/{role_id}/teams"],
+    listOrgRoleUsers: ["GET /orgs/{org}/organization-roles/{role_id}/users"],
+    listOrgRoles: ["GET /orgs/{org}/organization-roles"],
+    listOrganizationFineGrainedPermissions: [
+      "GET /orgs/{org}/organization-fine-grained-permissions"
+    ],
     listOutsideCollaborators: ["GET /orgs/{org}/outside_collaborators"],
     listPatGrantRepositories: [
       "GET /orgs/{org}/personal-access-tokens/{pat_id}/repositories"
@@ -5643,6 +5677,9 @@ var Endpoints = {
     listSecurityManagerTeams: ["GET /orgs/{org}/security-managers"],
     listWebhookDeliveries: ["GET /orgs/{org}/hooks/{hook_id}/deliveries"],
     listWebhooks: ["GET /orgs/{org}/hooks"],
+    patchCustomOrganizationRole: [
+      "PATCH /orgs/{org}/organization-roles/{role_id}"
+    ],
     pingWebhook: ["POST /orgs/{org}/hooks/{hook_id}/pings"],
     redeliverWebhookDelivery: [
       "POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts"
@@ -5666,6 +5703,18 @@ var Endpoints = {
     ],
     reviewPatGrantRequestsInBulk: [
       "POST /orgs/{org}/personal-access-token-requests"
+    ],
+    revokeAllOrgRolesTeam: [
+      "DELETE /orgs/{org}/organization-roles/teams/{team_slug}"
+    ],
+    revokeAllOrgRolesUser: [
+      "DELETE /orgs/{org}/organization-roles/users/{username}"
+    ],
+    revokeOrgRoleTeam: [
+      "DELETE /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}"
+    ],
+    revokeOrgRoleUser: [
+      "DELETE /orgs/{org}/organization-roles/users/{username}/{role_id}"
     ],
     setMembershipForUser: ["PUT /orgs/{org}/memberships/{username}"],
     setPublicMembershipForAuthenticatedUser: [
@@ -5957,6 +6006,9 @@ var Endpoints = {
       {},
       { mapToData: "users" }
     ],
+    cancelPagesDeployment: [
+      "POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel"
+    ],
     checkAutomatedSecurityFixes: [
       "GET /repos/{owner}/{repo}/automated-security-fixes"
     ],
@@ -5992,12 +6044,15 @@ var Endpoints = {
     createForAuthenticatedUser: ["POST /user/repos"],
     createFork: ["POST /repos/{owner}/{repo}/forks"],
     createInOrg: ["POST /orgs/{org}/repos"],
+    createOrUpdateCustomPropertiesValues: [
+      "PATCH /repos/{owner}/{repo}/properties/values"
+    ],
     createOrUpdateEnvironment: [
       "PUT /repos/{owner}/{repo}/environments/{environment_name}"
     ],
     createOrUpdateFileContents: ["PUT /repos/{owner}/{repo}/contents/{path}"],
     createOrgRuleset: ["POST /orgs/{org}/rulesets"],
-    createPagesDeployment: ["POST /repos/{owner}/{repo}/pages/deployment"],
+    createPagesDeployment: ["POST /repos/{owner}/{repo}/pages/deployments"],
     createPagesSite: ["POST /repos/{owner}/{repo}/pages"],
     createRelease: ["POST /repos/{owner}/{repo}/releases"],
     createRepoRuleset: ["POST /repos/{owner}/{repo}/rulesets"],
@@ -6150,6 +6205,9 @@ var Endpoints = {
     getOrgRulesets: ["GET /orgs/{org}/rulesets"],
     getPages: ["GET /repos/{owner}/{repo}/pages"],
     getPagesBuild: ["GET /repos/{owner}/{repo}/pages/builds/{build_id}"],
+    getPagesDeployment: [
+      "GET /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}"
+    ],
     getPagesHealthCheck: ["GET /repos/{owner}/{repo}/pages/health"],
     getParticipationStats: ["GET /repos/{owner}/{repo}/stats/participation"],
     getPullRequestReviewProtection: [
@@ -6360,6 +6418,9 @@ var Endpoints = {
     ]
   },
   securityAdvisories: {
+    createFork: [
+      "POST /repos/{owner}/{repo}/security-advisories/{ghsa_id}/forks"
+    ],
     createPrivateVulnerabilityReport: [
       "POST /repos/{owner}/{repo}/security-advisories/reports"
     ],
@@ -6849,7 +6910,7 @@ var import_endpoint = __nccwpck_require__(4471);
 var import_universal_user_agent = __nccwpck_require__(3843);
 
 // pkg/dist-src/version.js
-var VERSION = "8.1.6";
+var VERSION = "8.4.1";
 
 // pkg/dist-src/is-plain-object.js
 function isPlainObject(value) {
@@ -6874,7 +6935,7 @@ function getBufferResponse(response) {
 
 // pkg/dist-src/fetch-wrapper.js
 function fetchWrapper(requestOptions) {
-  var _a, _b, _c;
+  var _a, _b, _c, _d;
   const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
   const parseSuccessResponseBody = ((_a = requestOptions.request) == null ? void 0 : _a.parseSuccessResponseBody) !== false;
   if (isPlainObject(requestOptions.body) || Array.isArray(requestOptions.body)) {
@@ -6895,8 +6956,9 @@ function fetchWrapper(requestOptions) {
   return fetch(requestOptions.url, {
     method: requestOptions.method,
     body: requestOptions.body,
+    redirect: (_c = requestOptions.request) == null ? void 0 : _c.redirect,
     headers: requestOptions.headers,
-    signal: (_c = requestOptions.request) == null ? void 0 : _c.signal,
+    signal: (_d = requestOptions.request) == null ? void 0 : _d.signal,
     // duplex must be set if request.body is ReadableStream or Async Iterables.
     // See https://fetch.spec.whatwg.org/#dom-requestinit-duplex.
     ...requestOptions.body && { duplex: "half" }
@@ -6907,7 +6969,7 @@ function fetchWrapper(requestOptions) {
       headers[keyAndValue[0]] = keyAndValue[1];
     }
     if ("deprecation" in headers) {
-      const matches = headers.link && headers.link.match(/<([^>]+)>; rel="deprecation"/);
+      const matches = headers.link && headers.link.match(/<([^<>]+)>; rel="deprecation"/);
       const deprecationLink = matches && matches.pop();
       log.warn(
         `[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${headers.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`
@@ -6993,11 +7055,17 @@ async function getResponseData(response) {
 function toErrorMessage(data) {
   if (typeof data === "string")
     return data;
+  let suffix;
+  if ("documentation_url" in data) {
+    suffix = ` - ${data.documentation_url}`;
+  } else {
+    suffix = "";
+  }
   if ("message" in data) {
     if (Array.isArray(data.errors)) {
-      return `${data.message}: ${data.errors.map(JSON.stringify).join(", ")}`;
+      return `${data.message}: ${data.errors.map(JSON.stringify).join(", ")}${suffix}`;
     }
-    return data.message;
+    return `${data.message}${suffix}`;
   }
   return `Unknown error: ${JSON.stringify(data)}`;
 }
@@ -8736,13 +8804,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -9345,7 +9423,8 @@ module.exports.createRedirectInterceptor = createRedirectInterceptor
 module.exports.interceptors = {
   redirect: __nccwpck_require__(2553),
   retry: __nccwpck_require__(2895),
-  dump: __nccwpck_require__(2295)
+  dump: __nccwpck_require__(2295),
+  dns: __nccwpck_require__(8374)
 }
 
 module.exports.buildConnector = buildConnector
@@ -9989,7 +10068,7 @@ class RequestHandler extends AsyncResource {
         this.removeAbortListener = util.addAbortListener(this.signal, () => {
           this.reason = this.signal.reason ?? new RequestAbortedError()
           if (this.res) {
-            util.destroy(this.res, this.reason)
+            util.destroy(this.res.on('error', util.nop), this.reason)
           } else if (this.abort) {
             this.abort(this.reason)
           }
@@ -10414,9 +10493,9 @@ class UpgradeHandler extends AsyncResource {
   }
 
   onUpgrade (statusCode, rawHeaders, socket) {
-    const { callback, opaque, context } = this
+    assert(statusCode === 101)
 
-    assert.strictEqual(statusCode, 101)
+    const { callback, opaque, context } = this
 
     removeSignal(this)
 
@@ -10614,6 +10693,11 @@ class BodyReadable extends Readable {
     return consume(this, 'blob')
   }
 
+  // https://fetch.spec.whatwg.org/#dom-body-bytes
+  async bytes () {
+    return consume(this, 'bytes')
+  }
+
   // https://fetch.spec.whatwg.org/#dom-body-arraybuffer
   async arrayBuffer () {
     return consume(this, 'arrayBuffer')
@@ -10799,6 +10883,31 @@ function chunksDecode (chunks, length) {
   return buffer.utf8Slice(start, bufferLength)
 }
 
+/**
+ * @param {Buffer[]} chunks
+ * @param {number} length
+ * @returns {Uint8Array}
+ */
+function chunksConcat (chunks, length) {
+  if (chunks.length === 0 || length === 0) {
+    return new Uint8Array(0)
+  }
+  if (chunks.length === 1) {
+    // fast-path
+    return new Uint8Array(chunks[0])
+  }
+  const buffer = new Uint8Array(Buffer.allocUnsafeSlow(length).buffer)
+
+  let offset = 0
+  for (let i = 0; i < chunks.length; ++i) {
+    const chunk = chunks[i]
+    buffer.set(chunk, offset)
+    offset += chunk.length
+  }
+
+  return buffer
+}
+
 function consumeEnd (consume) {
   const { type, body, resolve, stream, length } = consume
 
@@ -10808,17 +10917,11 @@ function consumeEnd (consume) {
     } else if (type === 'json') {
       resolve(JSON.parse(chunksDecode(body, length)))
     } else if (type === 'arrayBuffer') {
-      const dst = new Uint8Array(length)
-
-      let pos = 0
-      for (const buf of body) {
-        dst.set(buf, pos)
-        pos += buf.byteLength
-      }
-
-      resolve(dst.buffer)
+      resolve(chunksConcat(body, length).buffer)
     } else if (type === 'blob') {
       resolve(new Blob(body, { type: stream[kContentType] }))
+    } else if (type === 'bytes') {
+      resolve(chunksConcat(body, length))
     }
 
     consumeFinish(consume)
@@ -10965,6 +11068,9 @@ const net = __nccwpck_require__(7030)
 const assert = __nccwpck_require__(4589)
 const util = __nccwpck_require__(6425)
 const { InvalidArgumentError, ConnectTimeoutError } = __nccwpck_require__(1158)
+const timers = __nccwpck_require__(5870)
+
+function noop () {}
 
 let tls // include tls conditionally since it is not always available
 
@@ -11052,9 +11158,11 @@ function buildConnector ({ allowH2, maxCachedSessions, socketPath, timeout, sess
       servername = servername || options.servername || util.getServerName(host) || null
 
       const sessionKey = servername || hostname
+      assert(sessionKey)
+
       const session = customSession || sessionCache.get(sessionKey) || null
 
-      assert(sessionKey)
+      port = port || 443
 
       socket = tls.connect({
         highWaterMark: 16384, // TLS in node can't have bigger HWM anyway...
@@ -11065,7 +11173,7 @@ function buildConnector ({ allowH2, maxCachedSessions, socketPath, timeout, sess
         // TODO(HTTP/2): Add support for h2c
         ALPNProtocols: allowH2 ? ['http/1.1', 'h2'] : ['http/1.1'],
         socket: httpSocket, // upgrade socket connection
-        port: port || 443,
+        port,
         host: hostname
       })
 
@@ -11076,11 +11184,14 @@ function buildConnector ({ allowH2, maxCachedSessions, socketPath, timeout, sess
         })
     } else {
       assert(!httpSocket, 'httpSocket can only be sent on TLS update')
+
+      port = port || 80
+
       socket = net.connect({
         highWaterMark: 64 * 1024, // Same as nodejs fs streams.
         ...options,
         localAddress,
-        port: port || 80,
+        port,
         host: hostname
       })
     }
@@ -11091,12 +11202,12 @@ function buildConnector ({ allowH2, maxCachedSessions, socketPath, timeout, sess
       socket.setKeepAlive(true, keepAliveInitialDelay)
     }
 
-    const cancelTimeout = setupTimeout(() => onConnectTimeout(socket), timeout)
+    const clearConnectTimeout = setupConnectTimeout(new WeakRef(socket), { timeout, hostname, port })
 
     socket
       .setNoDelay(true)
       .once(protocol === 'https:' ? 'secureConnect' : 'connect', function () {
-        cancelTimeout()
+        queueMicrotask(clearConnectTimeout)
 
         if (callback) {
           const cb = callback
@@ -11105,7 +11216,7 @@ function buildConnector ({ allowH2, maxCachedSessions, socketPath, timeout, sess
         }
       })
       .on('error', function (err) {
-        cancelTimeout()
+        queueMicrotask(clearConnectTimeout)
 
         if (callback) {
           const cb = callback
@@ -11118,36 +11229,75 @@ function buildConnector ({ allowH2, maxCachedSessions, socketPath, timeout, sess
   }
 }
 
-function setupTimeout (onConnectTimeout, timeout) {
-  if (!timeout) {
-    return () => {}
-  }
-
-  let s1 = null
-  let s2 = null
-  const timeoutId = setTimeout(() => {
-    // setImmediate is added to make sure that we prioritize socket error events over timeouts
-    s1 = setImmediate(() => {
-      if (process.platform === 'win32') {
-        // Windows needs an extra setImmediate probably due to implementation differences in the socket logic
-        s2 = setImmediate(() => onConnectTimeout())
-      } else {
-        onConnectTimeout()
+/**
+ * @param {WeakRef<net.Socket>} socketWeakRef
+ * @param {object} opts
+ * @param {number} opts.timeout
+ * @param {string} opts.hostname
+ * @param {number} opts.port
+ * @returns {() => void}
+ */
+const setupConnectTimeout = process.platform === 'win32'
+  ? (socketWeakRef, opts) => {
+      if (!opts.timeout) {
+        return noop
       }
-    })
-  }, timeout)
-  return () => {
-    clearTimeout(timeoutId)
-    clearImmediate(s1)
-    clearImmediate(s2)
-  }
-}
 
-function onConnectTimeout (socket) {
+      let s1 = null
+      let s2 = null
+      const fastTimer = timers.setFastTimeout(() => {
+      // setImmediate is added to make sure that we prioritize socket error events over timeouts
+        s1 = setImmediate(() => {
+        // Windows needs an extra setImmediate probably due to implementation differences in the socket logic
+          s2 = setImmediate(() => onConnectTimeout(socketWeakRef.deref(), opts))
+        })
+      }, opts.timeout)
+      return () => {
+        timers.clearFastTimeout(fastTimer)
+        clearImmediate(s1)
+        clearImmediate(s2)
+      }
+    }
+  : (socketWeakRef, opts) => {
+      if (!opts.timeout) {
+        return noop
+      }
+
+      let s1 = null
+      const fastTimer = timers.setFastTimeout(() => {
+      // setImmediate is added to make sure that we prioritize socket error events over timeouts
+        s1 = setImmediate(() => {
+          onConnectTimeout(socketWeakRef.deref(), opts)
+        })
+      }, opts.timeout)
+      return () => {
+        timers.clearFastTimeout(fastTimer)
+        clearImmediate(s1)
+      }
+    }
+
+/**
+ * @param {net.Socket} socket
+ * @param {object} opts
+ * @param {number} opts.timeout
+ * @param {string} opts.hostname
+ * @param {number} opts.port
+ */
+function onConnectTimeout (socket, opts) {
+  // The socket could be already garbage collected
+  if (socket == null) {
+    return
+  }
+
   let message = 'Connect Timeout Error'
   if (Array.isArray(socket.autoSelectFamilyAttemptedAddresses)) {
-    message += ` (attempted addresses: ${socket.autoSelectFamilyAttemptedAddresses.join(', ')})`
+    message += ` (attempted addresses: ${socket.autoSelectFamilyAttemptedAddresses.join(', ')},`
+  } else {
+    message += ` (attempted address: ${opts.hostname}:${opts.port},`
   }
+
+  message += ` timeout: ${opts.timeout}ms)`
+
   util.destroy(socket, new ConnectTimeoutError(message))
 }
 
@@ -11690,6 +11840,18 @@ class RequestRetryError extends UndiciError {
   }
 }
 
+class ResponseError extends UndiciError {
+  constructor (message, code, { headers, data }) {
+    super(message)
+    this.name = 'ResponseError'
+    this.message = message || 'Response error'
+    this.code = 'UND_ERR_RESPONSE'
+    this.statusCode = code
+    this.data = data
+    this.headers = headers
+  }
+}
+
 class SecureProxyConnectionError extends UndiciError {
   constructor (cause, message, options) {
     super(message, { cause, ...(options ?? {}) })
@@ -11722,6 +11884,7 @@ module.exports = {
   BalancedPoolMissingUpstreamError,
   ResponseExceededMaxSizeError,
   RequestRetryError,
+  ResponseError,
   SecureProxyConnectionError
 }
 
@@ -12601,7 +12764,7 @@ function getServerName (host) {
     return null
   }
 
-  assert.strictEqual(typeof host, 'string')
+  assert(typeof host === 'string')
 
   const servername = getHostname(host)
   if (net.isIP(servername)) {
@@ -13255,9 +13418,23 @@ const kWeight = Symbol('kWeight')
 const kMaxWeightPerServer = Symbol('kMaxWeightPerServer')
 const kErrorPenalty = Symbol('kErrorPenalty')
 
+/**
+ * Calculate the greatest common divisor of two numbers by
+ * using the Euclidean algorithm.
+ *
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
 function getGreatestCommonDivisor (a, b) {
-  if (b === 0) return a
-  return getGreatestCommonDivisor(b, a % b)
+  if (a === 0) return b
+
+  while (b !== 0) {
+    const t = b
+    b = a % b
+    a = t
+  }
+  return a
 }
 
 function defaultFactory (origin, opts) {
@@ -13335,7 +13512,12 @@ class BalancedPool extends PoolBase {
   }
 
   _updateBalancedPoolStats () {
-    this[kGreatestCommonDivisor] = this[kClients].map(p => p[kWeight]).reduce(getGreatestCommonDivisor, 0)
+    let result = 0
+    for (let i = 0; i < this[kClients].length; i++) {
+      result = getGreatestCommonDivisor(this[kClients][i][kWeight], result)
+    }
+
+    this[kGreatestCommonDivisor] = result
   }
 
   removeUpstream (upstream) {
@@ -13512,35 +13694,35 @@ async function lazyllhttp () {
         return 0
       },
       wasm_on_status: (p, at, len) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         const start = at - currentBufferPtr + currentBufferRef.byteOffset
         return currentParser.onStatus(new FastBuffer(currentBufferRef.buffer, start, len)) || 0
       },
       wasm_on_message_begin: (p) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         return currentParser.onMessageBegin() || 0
       },
       wasm_on_header_field: (p, at, len) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         const start = at - currentBufferPtr + currentBufferRef.byteOffset
         return currentParser.onHeaderField(new FastBuffer(currentBufferRef.buffer, start, len)) || 0
       },
       wasm_on_header_value: (p, at, len) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         const start = at - currentBufferPtr + currentBufferRef.byteOffset
         return currentParser.onHeaderValue(new FastBuffer(currentBufferRef.buffer, start, len)) || 0
       },
       wasm_on_headers_complete: (p, statusCode, upgrade, shouldKeepAlive) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         return currentParser.onHeadersComplete(statusCode, Boolean(upgrade), Boolean(shouldKeepAlive)) || 0
       },
       wasm_on_body: (p, at, len) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         const start = at - currentBufferPtr + currentBufferRef.byteOffset
         return currentParser.onBody(new FastBuffer(currentBufferRef.buffer, start, len)) || 0
       },
       wasm_on_message_complete: (p) => {
-        assert.strictEqual(currentParser.ptr, p)
+        assert(currentParser.ptr === p)
         return currentParser.onMessageComplete() || 0
       }
 
@@ -13558,9 +13740,17 @@ let currentBufferRef = null
 let currentBufferSize = 0
 let currentBufferPtr = null
 
-const TIMEOUT_HEADERS = 1
-const TIMEOUT_BODY = 2
-const TIMEOUT_IDLE = 3
+const USE_NATIVE_TIMER = 0
+const USE_FAST_TIMER = 1
+
+// Use fast timers for headers and body to take eventual event loop
+// latency into account.
+const TIMEOUT_HEADERS = 2 | USE_FAST_TIMER
+const TIMEOUT_BODY = 4 | USE_FAST_TIMER
+
+// Use native timers to ignore event loop latency for keep-alive
+// handling.
+const TIMEOUT_KEEP_ALIVE = 8 | USE_NATIVE_TIMER
 
 class Parser {
   constructor (client, socket, { exports }) {
@@ -13591,26 +13781,39 @@ class Parser {
     this.maxResponseSize = client[kMaxResponseSize]
   }
 
-  setTimeout (value, type) {
-    this.timeoutType = type
-    if (value !== this.timeoutValue) {
-      timers.clearTimeout(this.timeout)
-      if (value) {
-        this.timeout = timers.setTimeout(onParserTimeout, value, this)
-        // istanbul ignore else: only for jest
-        if (this.timeout.unref) {
-          this.timeout.unref()
-        }
-      } else {
+  setTimeout (delay, type) {
+    // If the existing timer and the new timer are of different timer type
+    // (fast or native) or have different delay, we need to clear the existing
+    // timer and set a new one.
+    if (
+      delay !== this.timeoutValue ||
+      (type & USE_FAST_TIMER) ^ (this.timeoutType & USE_FAST_TIMER)
+    ) {
+      // If a timeout is already set, clear it with clearTimeout of the fast
+      // timer implementation, as it can clear fast and native timers.
+      if (this.timeout) {
+        timers.clearTimeout(this.timeout)
         this.timeout = null
       }
-      this.timeoutValue = value
+
+      if (delay) {
+        if (type & USE_FAST_TIMER) {
+          this.timeout = timers.setFastTimeout(onParserTimeout, delay, new WeakRef(this))
+        } else {
+          this.timeout = setTimeout(onParserTimeout, delay, new WeakRef(this))
+          this.timeout.unref()
+        }
+      }
+
+      this.timeoutValue = delay
     } else if (this.timeout) {
       // istanbul ignore else: only for jest
       if (this.timeout.refresh) {
         this.timeout.refresh()
       }
     }
+
+    this.timeoutType = type
   }
 
   resume () {
@@ -13715,7 +13918,7 @@ class Parser {
     this.llhttp.llhttp_free(this.ptr)
     this.ptr = null
 
-    timers.clearTimeout(this.timeout)
+    this.timeout && timers.clearTimeout(this.timeout)
     this.timeout = null
     this.timeoutValue = null
     this.timeoutType = null
@@ -13790,20 +13993,19 @@ class Parser {
     const { upgrade, client, socket, headers, statusCode } = this
 
     assert(upgrade)
+    assert(client[kSocket] === socket)
+    assert(!socket.destroyed)
+    assert(!this.paused)
+    assert((headers.length & 1) === 0)
 
     const request = client[kQueue][client[kRunningIdx]]
     assert(request)
-
-    assert(!socket.destroyed)
-    assert(socket === client[kSocket])
-    assert(!this.paused)
     assert(request.upgrade || request.method === 'CONNECT')
 
     this.statusCode = null
     this.statusText = ''
     this.shouldKeepAlive = null
 
-    assert(this.headers.length % 2 === 0)
     this.headers = []
     this.headersSize = 0
 
@@ -13860,7 +14062,7 @@ class Parser {
       return -1
     }
 
-    assert.strictEqual(this.timeoutType, TIMEOUT_HEADERS)
+    assert(this.timeoutType === TIMEOUT_HEADERS)
 
     this.statusCode = statusCode
     this.shouldKeepAlive = (
@@ -13893,7 +14095,7 @@ class Parser {
       return 2
     }
 
-    assert(this.headers.length % 2 === 0)
+    assert((this.headers.length & 1) === 0)
     this.headers = []
     this.headersSize = 0
 
@@ -13950,7 +14152,7 @@ class Parser {
     const request = client[kQueue][client[kRunningIdx]]
     assert(request)
 
-    assert.strictEqual(this.timeoutType, TIMEOUT_BODY)
+    assert(this.timeoutType === TIMEOUT_BODY)
     if (this.timeout) {
       // istanbul ignore else: only for jest
       if (this.timeout.refresh) {
@@ -13983,10 +14185,11 @@ class Parser {
       return
     }
 
+    assert(statusCode >= 100)
+    assert((this.headers.length & 1) === 0)
+
     const request = client[kQueue][client[kRunningIdx]]
     assert(request)
-
-    assert(statusCode >= 100)
 
     this.statusCode = null
     this.statusText = ''
@@ -13995,7 +14198,6 @@ class Parser {
     this.keepAlive = ''
     this.connection = ''
 
-    assert(this.headers.length % 2 === 0)
     this.headers = []
     this.headersSize = 0
 
@@ -14014,7 +14216,7 @@ class Parser {
     client[kQueue][client[kRunningIdx]++] = null
 
     if (socket[kWriting]) {
-      assert.strictEqual(client[kRunning], 0)
+      assert(client[kRunning] === 0)
       // Response completed before request.
       util.destroy(socket, new InformationalError('reset'))
       return constants.ERROR.PAUSED
@@ -14040,19 +14242,19 @@ class Parser {
 }
 
 function onParserTimeout (parser) {
-  const { socket, timeoutType, client } = parser
+  const { socket, timeoutType, client, paused } = parser.deref()
 
   /* istanbul ignore else */
   if (timeoutType === TIMEOUT_HEADERS) {
     if (!socket[kWriting] || socket.writableNeedDrain || client[kRunning] > 1) {
-      assert(!parser.paused, 'cannot be paused while waiting for headers')
+      assert(!paused, 'cannot be paused while waiting for headers')
       util.destroy(socket, new HeadersTimeoutError())
     }
   } else if (timeoutType === TIMEOUT_BODY) {
-    if (!parser.paused) {
+    if (!paused) {
       util.destroy(socket, new BodyTimeoutError())
     }
-  } else if (timeoutType === TIMEOUT_IDLE) {
+  } else if (timeoutType === TIMEOUT_KEEP_ALIVE) {
     assert(client[kRunning] === 0 && client[kKeepAliveTimeoutValue])
     util.destroy(socket, new InformationalError('socket idle timeout'))
   }
@@ -14073,9 +14275,9 @@ async function connectH1 (client, socket) {
   socket[kParser] = new Parser(client, socket, llhttpInstance)
 
   addListener(socket, 'error', function (err) {
-    const parser = this[kParser]
-
     assert(err.code !== 'ERR_TLS_CERT_ALTNAME_INVALID')
+
+    const parser = this[kParser]
 
     // On Mac OS, we get an ECONNRESET even if there is a full body to be forwarded
     // to the user.
@@ -14230,8 +14432,8 @@ function resumeH1 (client) {
     }
 
     if (client[kSize] === 0) {
-      if (socket[kParser].timeoutType !== TIMEOUT_IDLE) {
-        socket[kParser].setTimeout(client[kKeepAliveTimeoutValue], TIMEOUT_IDLE)
+      if (socket[kParser].timeoutType !== TIMEOUT_KEEP_ALIVE) {
+        socket[kParser].setTimeout(client[kKeepAliveTimeoutValue], TIMEOUT_KEEP_ALIVE)
       }
     } else if (client[kRunning] > 0 && socket[kParser].statusCode < 200) {
       if (socket[kParser].timeoutType !== TIMEOUT_HEADERS) {
@@ -14267,7 +14469,10 @@ function writeH1 (client, request) {
   const expectsPayload = (
     method === 'PUT' ||
     method === 'POST' ||
-    method === 'PATCH'
+    method === 'PATCH' ||
+    method === 'QUERY' ||
+    method === 'PROPFIND' ||
+    method === 'PROPPATCH'
   )
 
   if (util.isFormDataLike(body)) {
@@ -14546,7 +14751,7 @@ function writeBuffer (abort, body, client, request, socket, contentLength, heade
       socket.uncork()
       request.onBodySent(body)
 
-      if (!expectsPayload) {
+      if (!expectsPayload && request.reset !== false) {
         socket[kReset] = true
       }
     }
@@ -14576,7 +14781,7 @@ async function writeBlob (abort, body, client, request, socket, contentLength, h
     request.onBodySent(buffer)
     request.onRequestSent()
 
-    if (!expectsPayload) {
+    if (!expectsPayload && request.reset !== false) {
       socket[kReset] = true
     }
 
@@ -14677,7 +14882,7 @@ class AsyncWriter {
     socket.cork()
 
     if (bytesWritten === 0) {
-      if (!expectsPayload) {
+      if (!expectsPayload && request.reset !== false) {
         socket[kReset] = true
       }
 
@@ -14805,10 +15010,14 @@ const {
   kOnError,
   kMaxConcurrentStreams,
   kHTTP2Session,
-  kResume
+  kResume,
+  kSize,
+  kHTTPContext
 } = __nccwpck_require__(3112)
 
 const kOpenStreams = Symbol('open streams')
+
+let extractBody
 
 // Experimental
 let h2ExperimentalWarned = false
@@ -14941,11 +15150,10 @@ async function connectH2 (client, socket) {
     version: 'h2',
     defaultPipelining: Infinity,
     write (...args) {
-      // TODO (fix): return
-      writeH2(client, ...args)
+      return writeH2(client, ...args)
     },
     resume () {
-
+      resumeH2(client)
     },
     destroy (err, callback) {
       if (closed) {
@@ -14960,6 +15168,20 @@ async function connectH2 (client, socket) {
     },
     busy () {
       return false
+    }
+  }
+}
+
+function resumeH2 (client) {
+  const socket = client[kSocket]
+
+  if (socket?.destroyed === false) {
+    if (client[kSize] === 0 && client[kMaxConcurrentStreams] === 0) {
+      socket.unref()
+      client[kHTTP2Session].unref()
+    } else {
+      socket.ref()
+      client[kHTTP2Session].ref()
     }
   }
 }
@@ -14991,17 +15213,33 @@ function onHttp2SessionEnd () {
  * along with the socket right away
  */
 function onHTTP2GoAway (code) {
-  const err = new RequestAbortedError(`HTTP/2: "GOAWAY" frame received with code ${code}`)
+  // We cannot recover, so best to close the session and the socket
+  const err = this[kError] || new SocketError(`HTTP/2: "GOAWAY" frame received with code ${code}`, util.getSocketInfo(this))
+  const client = this[kClient]
 
-  // We need to trigger the close cycle right away
-  // We need to destroy the session and the socket
-  // Requests should be failed with the error after the current one is handled
-  this[kSocket][kError] = err
-  this[kClient][kOnError](err)
+  client[kSocket] = null
+  client[kHTTPContext] = null
 
-  this.unref()
+  if (this[kHTTP2Session] != null) {
+    this[kHTTP2Session].destroy(err)
+    this[kHTTP2Session] = null
+  }
 
   util.destroy(this[kSocket], err)
+
+  // Fail head of pipeline.
+  if (client[kRunningIdx] < client[kQueue].length) {
+    const request = client[kQueue][client[kRunningIdx]]
+    client[kQueue][client[kRunningIdx]++] = null
+    util.errorRequest(client, request, err)
+    client[kPendingIdx] = client[kRunningIdx]
+  }
+
+  assert(client[kRunning] === 0)
+
+  client.emit('disconnect', client[kUrl], [client], err)
+
+  client[kResume]()
 }
 
 // https://www.rfc-editor.org/rfc/rfc7230#section-3.3.2
@@ -15011,14 +15249,11 @@ function shouldSendContentLength (method) {
 
 function writeH2 (client, request) {
   const session = client[kHTTP2Session]
-  const { body, method, path, host, upgrade, expectContinue, signal, headers: reqHeaders } = request
+  const { method, path, host, upgrade, expectContinue, signal, headers: reqHeaders } = request
+  let { body } = request
 
   if (upgrade) {
     util.errorRequest(client, request, new Error('Upgrade not supported for H2'))
-    return false
-  }
-
-  if (request.aborted) {
     return false
   }
 
@@ -15064,6 +15299,8 @@ function writeH2 (client, request) {
     // We do not destroy the socket as we can continue using the session
     // the stream get's destroyed and the session remains to create new streams
     util.destroy(body, err)
+    client[kQueue][client[kRunningIdx]++] = null
+    client[kResume]()
   }
 
   try {
@@ -15072,6 +15309,10 @@ function writeH2 (client, request) {
     request.onConnect(abort)
   } catch (err) {
     util.errorRequest(client, request, err)
+  }
+
+  if (request.aborted) {
+    return false
   }
 
   if (method === 'CONNECT') {
@@ -15085,10 +15326,12 @@ function writeH2 (client, request) {
     if (stream.id && !stream.pending) {
       request.onUpgrade(null, null, stream)
       ++session[kOpenStreams]
+      client[kQueue][client[kRunningIdx]++] = null
     } else {
       stream.once('ready', () => {
         request.onUpgrade(null, null, stream)
         ++session[kOpenStreams]
+        client[kQueue][client[kRunningIdx]++] = null
       })
     }
 
@@ -15127,6 +15370,16 @@ function writeH2 (client, request) {
   }
 
   let contentLength = util.bodyLength(body)
+
+  if (util.isFormDataLike(body)) {
+    extractBody ??= (__nccwpck_require__(7679).extractBody)
+
+    const [bodyStream, contentType] = extractBody(body)
+    headers['content-type'] = contentType
+
+    body = bodyStream.stream
+    contentLength = bodyStream.length
+  }
 
   if (contentLength == null) {
     contentLength = request.contentLength
@@ -15209,17 +15462,20 @@ function writeH2 (client, request) {
     // Present specially when using pipeline or stream
     if (stream.state?.state == null || stream.state.state < 6) {
       request.onComplete([])
-      return
     }
 
-    // Stream is closed or half-closed-remote (6), decrement counter and cleanup
-    // It does not have sense to continue working with the stream as we do not
-    // have yet RST_STREAM support on client-side
     if (session[kOpenStreams] === 0) {
+      // Stream is closed or half-closed-remote (6), decrement counter and cleanup
+      // It does not have sense to continue working with the stream as we do not
+      // have yet RST_STREAM support on client-side
+
       session.unref()
     }
 
     abort(new InformationalError('HTTP/2: stream half-closed (remote)'))
+    client[kQueue][client[kRunningIdx]++] = null
+    client[kPendingIdx] = client[kRunningIdx]
+    client[kResume]()
   })
 
   stream.once('close', () => {
@@ -15544,6 +15800,8 @@ let deprecatedInterceptorWarned = false
 
 const kClosedResolve = Symbol('kClosedResolve')
 
+const noop = () => {}
+
 function getPipelining (client) {
   return client[kPipelining] ?? client[kHTTPContext]?.defaultPipelining ?? 1
 }
@@ -15866,6 +16124,10 @@ function onError (client, err) {
   }
 }
 
+/**
+ * @param {Client} client
+ * @returns
+ */
 async function connect (client) {
   assert(!client[kConnecting])
   assert(!client[kHTTPContext])
@@ -15919,7 +16181,7 @@ async function connect (client) {
     })
 
     if (client.destroyed) {
-      util.destroy(socket.on('error', () => {}), new ClientDestroyedError())
+      util.destroy(socket.on('error', noop), new ClientDestroyedError())
       return
     }
 
@@ -15930,7 +16192,7 @@ async function connect (client) {
         ? await connectH2(client, socket)
         : await connectH1(client, socket)
     } catch (err) {
-      socket.destroy().on('error', () => {})
+      socket.destroy().on('error', noop)
       throw err
     }
 
@@ -16777,9 +17039,9 @@ class PoolBase extends DispatcherBase {
 
   async [kClose] () {
     if (this[kQueue].isEmpty()) {
-      return Promise.all(this[kClients].map(c => c.close()))
+      await Promise.all(this[kClients].map(c => c.close()))
     } else {
-      return new Promise((resolve) => {
+      await new Promise((resolve) => {
         this[kClosedResolve] = resolve
       })
     }
@@ -16794,7 +17056,7 @@ class PoolBase extends DispatcherBase {
       item.handler.onError(err)
     }
 
-    return Promise.all(this[kClients].map(c => c.destroy(err)))
+    await Promise.all(this[kClients].map(c => c.destroy(err)))
   }
 
   [kDispatch] (opts, handler) {
@@ -16979,6 +17241,20 @@ class Pool extends PoolBase {
       ? { ...options.interceptors }
       : undefined
     this[kFactory] = factory
+
+    this.on('connectionError', (origin, targets, error) => {
+      // If a connection error occurs, we remove the client from the pool,
+      // and emit a connectionError event. They will not be re-used.
+      // Fixes https://github.com/nodejs/undici/issues/3895
+      for (const target of targets) {
+        // Do not use kRemoveClient here, as it will close the client,
+        // but the client cannot be closed in this state.
+        const idx = this[kClients].indexOf(target)
+        if (idx !== -1) {
+          this[kClients].splice(idx, 1)
+        }
+      }
+    })
   }
 
   [kGetDispatcher] () {
@@ -17028,6 +17304,8 @@ function defaultProtocolPort (protocol) {
 function defaultFactory (origin, opts) {
   return new Pool(origin, opts)
 }
+
+const noop = () => {}
 
 class ProxyAgent extends DispatcherBase {
   constructor (opts) {
@@ -17087,7 +17365,7 @@ class ProxyAgent extends DispatcherBase {
             servername: this[kProxyTls]?.servername || proxyHostname
           })
           if (statusCode !== 200) {
-            socket.on('error', () => {}).destroy()
+            socket.on('error', noop).destroy()
             callback(new RequestAbortedError(`Proxy response (${statusCode}) !== 200 when HTTP Tunneling`))
           }
           if (opts.protocol !== 'https:') {
@@ -17766,8 +18044,18 @@ class RetryHandler {
     if (this.resume != null) {
       this.resume = null
 
-      if (statusCode !== 206) {
-        return true
+      // Only Partial Content 206 supposed to provide Content-Range,
+      // any other status code that partially consumed the payload
+      // should not be retry because it would result in downstream
+      // wrongly concatanete multiple responses.
+      if (statusCode !== 206 && (this.start > 0 || statusCode !== 200)) {
+        this.abort(
+          new RequestRetryError('server does not support the range header and the payload was partially consumed', statusCode, {
+            headers,
+            data: { count: this.retryCount }
+          })
+        )
+        return false
       }
 
       const contentRange = parseRangeHeader(headers['content-range'])
@@ -17793,7 +18081,7 @@ class RetryHandler {
         return false
       }
 
-      const { start, size, end = size } = contentRange
+      const { start, size, end = size - 1 } = contentRange
 
       assert(this.start === start, 'content-range mismatch')
       assert(this.end == null || this.end === end, 'content-range mismatch')
@@ -17816,7 +18104,7 @@ class RetryHandler {
           )
         }
 
-        const { start, size, end = size } = range
+        const { start, size, end = size - 1 } = range
         assert(
           start != null && Number.isFinite(start),
           'content-range mismatch'
@@ -17830,7 +18118,7 @@ class RetryHandler {
       // We make our best to checkpoint the body for further range headers
       if (this.end == null) {
         const contentLength = headers['content-length']
-        this.end = contentLength != null ? Number(contentLength) : null
+        this.end = contentLength != null ? Number(contentLength) - 1 : null
       }
 
       assert(Number.isFinite(this.start))
@@ -17936,6 +18224,388 @@ class RetryHandler {
 }
 
 module.exports = RetryHandler
+
+
+/***/ }),
+
+/***/ 8374:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+
+const { isIP } = __nccwpck_require__(7030)
+const { lookup } = __nccwpck_require__(610)
+const DecoratorHandler = __nccwpck_require__(8777)
+const { InvalidArgumentError, InformationalError } = __nccwpck_require__(1158)
+const maxInt = Math.pow(2, 31) - 1
+
+class DNSInstance {
+  #maxTTL = 0
+  #maxItems = 0
+  #records = new Map()
+  dualStack = true
+  affinity = null
+  lookup = null
+  pick = null
+
+  constructor (opts) {
+    this.#maxTTL = opts.maxTTL
+    this.#maxItems = opts.maxItems
+    this.dualStack = opts.dualStack
+    this.affinity = opts.affinity
+    this.lookup = opts.lookup ?? this.#defaultLookup
+    this.pick = opts.pick ?? this.#defaultPick
+  }
+
+  get full () {
+    return this.#records.size === this.#maxItems
+  }
+
+  runLookup (origin, opts, cb) {
+    const ips = this.#records.get(origin.hostname)
+
+    // If full, we just return the origin
+    if (ips == null && this.full) {
+      cb(null, origin.origin)
+      return
+    }
+
+    const newOpts = {
+      affinity: this.affinity,
+      dualStack: this.dualStack,
+      lookup: this.lookup,
+      pick: this.pick,
+      ...opts.dns,
+      maxTTL: this.#maxTTL,
+      maxItems: this.#maxItems
+    }
+
+    // If no IPs we lookup
+    if (ips == null) {
+      this.lookup(origin, newOpts, (err, addresses) => {
+        if (err || addresses == null || addresses.length === 0) {
+          cb(err ?? new InformationalError('No DNS entries found'))
+          return
+        }
+
+        this.setRecords(origin, addresses)
+        const records = this.#records.get(origin.hostname)
+
+        const ip = this.pick(
+          origin,
+          records,
+          newOpts.affinity
+        )
+
+        let port
+        if (typeof ip.port === 'number') {
+          port = `:${ip.port}`
+        } else if (origin.port !== '') {
+          port = `:${origin.port}`
+        } else {
+          port = ''
+        }
+
+        cb(
+          null,
+          `${origin.protocol}//${
+            ip.family === 6 ? `[${ip.address}]` : ip.address
+          }${port}`
+        )
+      })
+    } else {
+      // If there's IPs we pick
+      const ip = this.pick(
+        origin,
+        ips,
+        newOpts.affinity
+      )
+
+      // If no IPs we lookup - deleting old records
+      if (ip == null) {
+        this.#records.delete(origin.hostname)
+        this.runLookup(origin, opts, cb)
+        return
+      }
+
+      let port
+      if (typeof ip.port === 'number') {
+        port = `:${ip.port}`
+      } else if (origin.port !== '') {
+        port = `:${origin.port}`
+      } else {
+        port = ''
+      }
+
+      cb(
+        null,
+        `${origin.protocol}//${
+          ip.family === 6 ? `[${ip.address}]` : ip.address
+        }${port}`
+      )
+    }
+  }
+
+  #defaultLookup (origin, opts, cb) {
+    lookup(
+      origin.hostname,
+      {
+        all: true,
+        family: this.dualStack === false ? this.affinity : 0,
+        order: 'ipv4first'
+      },
+      (err, addresses) => {
+        if (err) {
+          return cb(err)
+        }
+
+        const results = new Map()
+
+        for (const addr of addresses) {
+          // On linux we found duplicates, we attempt to remove them with
+          // the latest record
+          results.set(`${addr.address}:${addr.family}`, addr)
+        }
+
+        cb(null, results.values())
+      }
+    )
+  }
+
+  #defaultPick (origin, hostnameRecords, affinity) {
+    let ip = null
+    const { records, offset } = hostnameRecords
+
+    let family
+    if (this.dualStack) {
+      if (affinity == null) {
+        // Balance between ip families
+        if (offset == null || offset === maxInt) {
+          hostnameRecords.offset = 0
+          affinity = 4
+        } else {
+          hostnameRecords.offset++
+          affinity = (hostnameRecords.offset & 1) === 1 ? 6 : 4
+        }
+      }
+
+      if (records[affinity] != null && records[affinity].ips.length > 0) {
+        family = records[affinity]
+      } else {
+        family = records[affinity === 4 ? 6 : 4]
+      }
+    } else {
+      family = records[affinity]
+    }
+
+    // If no IPs we return null
+    if (family == null || family.ips.length === 0) {
+      return ip
+    }
+
+    if (family.offset == null || family.offset === maxInt) {
+      family.offset = 0
+    } else {
+      family.offset++
+    }
+
+    const position = family.offset % family.ips.length
+    ip = family.ips[position] ?? null
+
+    if (ip == null) {
+      return ip
+    }
+
+    if (Date.now() - ip.timestamp > ip.ttl) { // record TTL is already in ms
+      // We delete expired records
+      // It is possible that they have different TTL, so we manage them individually
+      family.ips.splice(position, 1)
+      return this.pick(origin, hostnameRecords, affinity)
+    }
+
+    return ip
+  }
+
+  setRecords (origin, addresses) {
+    const timestamp = Date.now()
+    const records = { records: { 4: null, 6: null } }
+    for (const record of addresses) {
+      record.timestamp = timestamp
+      if (typeof record.ttl === 'number') {
+        // The record TTL is expected to be in ms
+        record.ttl = Math.min(record.ttl, this.#maxTTL)
+      } else {
+        record.ttl = this.#maxTTL
+      }
+
+      const familyRecords = records.records[record.family] ?? { ips: [] }
+
+      familyRecords.ips.push(record)
+      records.records[record.family] = familyRecords
+    }
+
+    this.#records.set(origin.hostname, records)
+  }
+
+  getHandler (meta, opts) {
+    return new DNSDispatchHandler(this, meta, opts)
+  }
+}
+
+class DNSDispatchHandler extends DecoratorHandler {
+  #state = null
+  #opts = null
+  #dispatch = null
+  #handler = null
+  #origin = null
+
+  constructor (state, { origin, handler, dispatch }, opts) {
+    super(handler)
+    this.#origin = origin
+    this.#handler = handler
+    this.#opts = { ...opts }
+    this.#state = state
+    this.#dispatch = dispatch
+  }
+
+  onError (err) {
+    switch (err.code) {
+      case 'ETIMEDOUT':
+      case 'ECONNREFUSED': {
+        if (this.#state.dualStack) {
+          // We delete the record and retry
+          this.#state.runLookup(this.#origin, this.#opts, (err, newOrigin) => {
+            if (err) {
+              return this.#handler.onError(err)
+            }
+
+            const dispatchOpts = {
+              ...this.#opts,
+              origin: newOrigin
+            }
+
+            this.#dispatch(dispatchOpts, this)
+          })
+
+          // if dual-stack disabled, we error out
+          return
+        }
+
+        this.#handler.onError(err)
+        return
+      }
+      case 'ENOTFOUND':
+        this.#state.deleteRecord(this.#origin)
+      // eslint-disable-next-line no-fallthrough
+      default:
+        this.#handler.onError(err)
+        break
+    }
+  }
+}
+
+module.exports = interceptorOpts => {
+  if (
+    interceptorOpts?.maxTTL != null &&
+    (typeof interceptorOpts?.maxTTL !== 'number' || interceptorOpts?.maxTTL < 0)
+  ) {
+    throw new InvalidArgumentError('Invalid maxTTL. Must be a positive number')
+  }
+
+  if (
+    interceptorOpts?.maxItems != null &&
+    (typeof interceptorOpts?.maxItems !== 'number' ||
+      interceptorOpts?.maxItems < 1)
+  ) {
+    throw new InvalidArgumentError(
+      'Invalid maxItems. Must be a positive number and greater than zero'
+    )
+  }
+
+  if (
+    interceptorOpts?.affinity != null &&
+    interceptorOpts?.affinity !== 4 &&
+    interceptorOpts?.affinity !== 6
+  ) {
+    throw new InvalidArgumentError('Invalid affinity. Must be either 4 or 6')
+  }
+
+  if (
+    interceptorOpts?.dualStack != null &&
+    typeof interceptorOpts?.dualStack !== 'boolean'
+  ) {
+    throw new InvalidArgumentError('Invalid dualStack. Must be a boolean')
+  }
+
+  if (
+    interceptorOpts?.lookup != null &&
+    typeof interceptorOpts?.lookup !== 'function'
+  ) {
+    throw new InvalidArgumentError('Invalid lookup. Must be a function')
+  }
+
+  if (
+    interceptorOpts?.pick != null &&
+    typeof interceptorOpts?.pick !== 'function'
+  ) {
+    throw new InvalidArgumentError('Invalid pick. Must be a function')
+  }
+
+  const dualStack = interceptorOpts?.dualStack ?? true
+  let affinity
+  if (dualStack) {
+    affinity = interceptorOpts?.affinity ?? null
+  } else {
+    affinity = interceptorOpts?.affinity ?? 4
+  }
+
+  const opts = {
+    maxTTL: interceptorOpts?.maxTTL ?? 10e3, // Expressed in ms
+    lookup: interceptorOpts?.lookup ?? null,
+    pick: interceptorOpts?.pick ?? null,
+    dualStack,
+    affinity,
+    maxItems: interceptorOpts?.maxItems ?? Infinity
+  }
+
+  const instance = new DNSInstance(opts)
+
+  return dispatch => {
+    return function dnsInterceptor (origDispatchOpts, handler) {
+      const origin =
+        origDispatchOpts.origin.constructor === URL
+          ? origDispatchOpts.origin
+          : new URL(origDispatchOpts.origin)
+
+      if (isIP(origin.hostname) !== 0) {
+        return dispatch(origDispatchOpts, handler)
+      }
+
+      instance.runLookup(origin, origDispatchOpts, (err, newOrigin) => {
+        if (err) {
+          return handler.onError(err)
+        }
+
+        let dispatchOpts = null
+        dispatchOpts = {
+          ...origDispatchOpts,
+          servername: origin.hostname, // For SNI on TLS
+          origin: newOrigin,
+          headers: {
+            host: origin.hostname,
+            ...origDispatchOpts.headers
+          }
+        }
+
+        dispatch(
+          dispatchOpts,
+          instance.getHandler({ origin, dispatch, handler }, origDispatchOpts)
+        )
+      })
+
+      return true
+    }
+  }
+}
 
 
 /***/ }),
@@ -19174,6 +19844,10 @@ function matchKey (mockDispatch, { path, method, body, headers }) {
 function getResponseData (data) {
   if (Buffer.isBuffer(data)) {
     return data
+  } else if (data instanceof Uint8Array) {
+    return data
+  } else if (data instanceof ArrayBuffer) {
+    return data
   } else if (typeof data === 'object') {
     return JSON.stringify(data)
   } else {
@@ -19512,102 +20186,426 @@ module.exports = class Pluralizer {
 
 
 
-const TICK_MS = 499
+/**
+ * This module offers an optimized timer implementation designed for scenarios
+ * where high precision is not critical.
+ *
+ * The timer achieves faster performance by using a low-resolution approach,
+ * with an accuracy target of within 500ms. This makes it particularly useful
+ * for timers with delays of 1 second or more, where exact timing is less
+ * crucial.
+ *
+ * It's important to note that Node.js timers are inherently imprecise, as
+ * delays can occur due to the event loop being blocked by other operations.
+ * Consequently, timers may trigger later than their scheduled time.
+ */
 
-let fastNow = Date.now()
+/**
+ * The fastNow variable contains the internal fast timer clock value.
+ *
+ * @type {number}
+ */
+let fastNow = 0
+
+/**
+ * RESOLUTION_MS represents the target resolution time in milliseconds.
+ *
+ * @type {number}
+ * @default 1000
+ */
+const RESOLUTION_MS = 1e3
+
+/**
+ * TICK_MS defines the desired interval in milliseconds between each tick.
+ * The target value is set to half the resolution time, minus 1 ms, to account
+ * for potential event loop overhead.
+ *
+ * @type {number}
+ * @default 499
+ */
+const TICK_MS = (RESOLUTION_MS >> 1) - 1
+
+/**
+ * fastNowTimeout is a Node.js timer used to manage and process
+ * the FastTimers stored in the `fastTimers` array.
+ *
+ * @type {NodeJS.Timeout}
+ */
 let fastNowTimeout
 
+/**
+ * The kFastTimer symbol is used to identify FastTimer instances.
+ *
+ * @type {Symbol}
+ */
+const kFastTimer = Symbol('kFastTimer')
+
+/**
+ * The fastTimers array contains all active FastTimers.
+ *
+ * @type {FastTimer[]}
+ */
 const fastTimers = []
 
-function onTimeout () {
-  fastNow = Date.now()
+/**
+ * These constants represent the various states of a FastTimer.
+ */
 
-  let len = fastTimers.length
+/**
+ * The `NOT_IN_LIST` constant indicates that the FastTimer is not included
+ * in the `fastTimers` array. Timers with this status will not be processed
+ * during the next tick by the `onTick` function.
+ *
+ * A FastTimer can be re-added to the `fastTimers` array by invoking the
+ * `refresh` method on the FastTimer instance.
+ *
+ * @type {-2}
+ */
+const NOT_IN_LIST = -2
+
+/**
+ * The `TO_BE_CLEARED` constant indicates that the FastTimer is scheduled
+ * for removal from the `fastTimers` array. A FastTimer in this state will
+ * be removed in the next tick by the `onTick` function and will no longer
+ * be processed.
+ *
+ * This status is also set when the `clear` method is called on the FastTimer instance.
+ *
+ * @type {-1}
+ */
+const TO_BE_CLEARED = -1
+
+/**
+ * The `PENDING` constant signifies that the FastTimer is awaiting processing
+ * in the next tick by the `onTick` function. Timers with this status will have
+ * their `_idleStart` value set and their status updated to `ACTIVE` in the next tick.
+ *
+ * @type {0}
+ */
+const PENDING = 0
+
+/**
+ * The `ACTIVE` constant indicates that the FastTimer is active and waiting
+ * for its timer to expire. During the next tick, the `onTick` function will
+ * check if the timer has expired, and if so, it will execute the associated callback.
+ *
+ * @type {1}
+ */
+const ACTIVE = 1
+
+/**
+ * The onTick function processes the fastTimers array.
+ *
+ * @returns {void}
+ */
+function onTick () {
+  /**
+   * Increment the fastNow value by the TICK_MS value, despite the actual time
+   * that has passed since the last tick. This approach ensures independence
+   * from the system clock and delays caused by a blocked event loop.
+   *
+   * @type {number}
+   */
+  fastNow += TICK_MS
+
+  /**
+   * The `idx` variable is used to iterate over the `fastTimers` array.
+   * Expired timers are removed by replacing them with the last element in the array.
+   * Consequently, `idx` is only incremented when the current element is not removed.
+   *
+   * @type {number}
+   */
   let idx = 0
+
+  /**
+   * The len variable will contain the length of the fastTimers array
+   * and will be decremented when a FastTimer should be removed from the
+   * fastTimers array.
+   *
+   * @type {number}
+   */
+  let len = fastTimers.length
+
   while (idx < len) {
+    /**
+     * @type {FastTimer}
+     */
     const timer = fastTimers[idx]
 
-    if (timer.state === 0) {
-      timer.state = fastNow + timer.delay - TICK_MS
-    } else if (timer.state > 0 && fastNow >= timer.state) {
-      timer.state = -1
-      timer.callback(timer.opaque)
+    // If the timer is in the ACTIVE state and the timer has expired, it will
+    // be processed in the next tick.
+    if (timer._state === PENDING) {
+      // Set the _idleStart value to the fastNow value minus the TICK_MS value
+      // to account for the time the timer was in the PENDING state.
+      timer._idleStart = fastNow - TICK_MS
+      timer._state = ACTIVE
+    } else if (
+      timer._state === ACTIVE &&
+      fastNow >= timer._idleStart + timer._idleTimeout
+    ) {
+      timer._state = TO_BE_CLEARED
+      timer._idleStart = -1
+      timer._onTimeout(timer._timerArg)
     }
 
-    if (timer.state === -1) {
-      timer.state = -2
-      if (idx !== len - 1) {
-        fastTimers[idx] = fastTimers.pop()
-      } else {
-        fastTimers.pop()
+    if (timer._state === TO_BE_CLEARED) {
+      timer._state = NOT_IN_LIST
+
+      // Move the last element to the current index and decrement len if it is
+      // not the only element in the array.
+      if (--len !== 0) {
+        fastTimers[idx] = fastTimers[len]
       }
-      len -= 1
     } else {
-      idx += 1
+      ++idx
     }
   }
 
-  if (fastTimers.length > 0) {
+  // Set the length of the fastTimers array to the new length and thus
+  // removing the excess FastTimers elements from the array.
+  fastTimers.length = len
+
+  // If there are still active FastTimers in the array, refresh the Timer.
+  // If there are no active FastTimers, the timer will be refreshed again
+  // when a new FastTimer is instantiated.
+  if (fastTimers.length !== 0) {
     refreshTimeout()
   }
 }
 
 function refreshTimeout () {
-  if (fastNowTimeout?.refresh) {
+  // If the fastNowTimeout is already set, refresh it.
+  if (fastNowTimeout) {
     fastNowTimeout.refresh()
+  // fastNowTimeout is not instantiated yet, create a new Timer.
   } else {
     clearTimeout(fastNowTimeout)
-    fastNowTimeout = setTimeout(onTimeout, TICK_MS)
+    fastNowTimeout = setTimeout(onTick, TICK_MS)
+
+    // If the Timer has an unref method, call it to allow the process to exit if
+    // there are no other active handles.
     if (fastNowTimeout.unref) {
       fastNowTimeout.unref()
     }
   }
 }
 
-class Timeout {
-  constructor (callback, delay, opaque) {
-    this.callback = callback
-    this.delay = delay
-    this.opaque = opaque
+/**
+ * The `FastTimer` class is a data structure designed to store and manage
+ * timer information.
+ */
+class FastTimer {
+  [kFastTimer] = true
 
-    //  -2 not in timer list
-    //  -1 in timer list but inactive
-    //   0 in timer list waiting for time
-    // > 0 in timer list waiting for time to expire
-    this.state = -2
+  /**
+   * The state of the timer, which can be one of the following:
+   * - NOT_IN_LIST (-2)
+   * - TO_BE_CLEARED (-1)
+   * - PENDING (0)
+   * - ACTIVE (1)
+   *
+   * @type {-2|-1|0|1}
+   * @private
+   */
+  _state = NOT_IN_LIST
+
+  /**
+   * The number of milliseconds to wait before calling the callback.
+   *
+   * @type {number}
+   * @private
+   */
+  _idleTimeout = -1
+
+  /**
+   * The time in milliseconds when the timer was started. This value is used to
+   * calculate when the timer should expire.
+   *
+   * @type {number}
+   * @default -1
+   * @private
+   */
+  _idleStart = -1
+
+  /**
+   * The function to be executed when the timer expires.
+   * @type {Function}
+   * @private
+   */
+  _onTimeout
+
+  /**
+   * The argument to be passed to the callback when the timer expires.
+   *
+   * @type {*}
+   * @private
+   */
+  _timerArg
+
+  /**
+   * @constructor
+   * @param {Function} callback A function to be executed after the timer
+   * expires.
+   * @param {number} delay The time, in milliseconds that the timer should wait
+   * before the specified function or code is executed.
+   * @param {*} arg
+   */
+  constructor (callback, delay, arg) {
+    this._onTimeout = callback
+    this._idleTimeout = delay
+    this._timerArg = arg
 
     this.refresh()
   }
 
+  /**
+   * Sets the timer's start time to the current time, and reschedules the timer
+   * to call its callback at the previously specified duration adjusted to the
+   * current time.
+   * Using this on a timer that has already called its callback will reactivate
+   * the timer.
+   *
+   * @returns {void}
+   */
   refresh () {
-    if (this.state === -2) {
+    // In the special case that the timer is not in the list of active timers,
+    // add it back to the array to be processed in the next tick by the onTick
+    // function.
+    if (this._state === NOT_IN_LIST) {
       fastTimers.push(this)
-      if (!fastNowTimeout || fastTimers.length === 1) {
-        refreshTimeout()
-      }
     }
 
-    this.state = 0
+    // If the timer is the only active timer, refresh the fastNowTimeout for
+    // better resolution.
+    if (!fastNowTimeout || fastTimers.length === 1) {
+      refreshTimeout()
+    }
+
+    // Setting the state to PENDING will cause the timer to be reset in the
+    // next tick by the onTick function.
+    this._state = PENDING
   }
 
+  /**
+   * The `clear` method cancels the timer, preventing it from executing.
+   *
+   * @returns {void}
+   * @private
+   */
   clear () {
-    this.state = -1
+    // Set the state to TO_BE_CLEARED to mark the timer for removal in the next
+    // tick by the onTick function.
+    this._state = TO_BE_CLEARED
+
+    // Reset the _idleStart value to -1 to indicate that the timer is no longer
+    // active.
+    this._idleStart = -1
   }
 }
 
+/**
+ * This module exports a setTimeout and clearTimeout function that can be
+ * used as a drop-in replacement for the native functions.
+ */
 module.exports = {
-  setTimeout (callback, delay, opaque) {
-    return delay <= 1e3
-      ? setTimeout(callback, delay, opaque)
-      : new Timeout(callback, delay, opaque)
+  /**
+   * The setTimeout() method sets a timer which executes a function once the
+   * timer expires.
+   * @param {Function} callback A function to be executed after the timer
+   * expires.
+   * @param {number} delay The time, in milliseconds that the timer should
+   * wait before the specified function or code is executed.
+   * @param {*} [arg] An optional argument to be passed to the callback function
+   * when the timer expires.
+   * @returns {NodeJS.Timeout|FastTimer}
+   */
+  setTimeout (callback, delay, arg) {
+    // If the delay is less than or equal to the RESOLUTION_MS value return a
+    // native Node.js Timer instance.
+    return delay <= RESOLUTION_MS
+      ? setTimeout(callback, delay, arg)
+      : new FastTimer(callback, delay, arg)
   },
+  /**
+   * The clearTimeout method cancels an instantiated Timer previously created
+   * by calling setTimeout.
+   *
+   * @param {NodeJS.Timeout|FastTimer} timeout
+   */
   clearTimeout (timeout) {
-    if (timeout instanceof Timeout) {
+    // If the timeout is a FastTimer, call its own clear method.
+    if (timeout[kFastTimer]) {
+      /**
+       * @type {FastTimer}
+       */
       timeout.clear()
+      // Otherwise it is an instance of a native NodeJS.Timeout, so call the
+      // Node.js native clearTimeout function.
     } else {
       clearTimeout(timeout)
     }
-  }
+  },
+  /**
+   * The setFastTimeout() method sets a fastTimer which executes a function once
+   * the timer expires.
+   * @param {Function} callback A function to be executed after the timer
+   * expires.
+   * @param {number} delay The time, in milliseconds that the timer should
+   * wait before the specified function or code is executed.
+   * @param {*} [arg] An optional argument to be passed to the callback function
+   * when the timer expires.
+   * @returns {FastTimer}
+   */
+  setFastTimeout (callback, delay, arg) {
+    return new FastTimer(callback, delay, arg)
+  },
+  /**
+   * The clearTimeout method cancels an instantiated FastTimer previously
+   * created by calling setFastTimeout.
+   *
+   * @param {FastTimer} timeout
+   */
+  clearFastTimeout (timeout) {
+    timeout.clear()
+  },
+  /**
+   * The now method returns the value of the internal fast timer clock.
+   *
+   * @returns {number}
+   */
+  now () {
+    return fastNow
+  },
+  /**
+   * Trigger the onTick function to process the fastTimers array.
+   * Exported for testing purposes only.
+   * Marking as deprecated to discourage any use outside of testing.
+   * @deprecated
+   * @param {number} [delay=0] The delay in milliseconds to add to the now value.
+   */
+  tick (delay = 0) {
+    fastNow += delay - RESOLUTION_MS + 1
+    onTick()
+    onTick()
+  },
+  /**
+   * Reset FastTimers.
+   * Exported for testing purposes only.
+   * Marking as deprecated to discourage any use outside of testing.
+   * @deprecated
+   */
+  reset () {
+    fastNow = 0
+    fastTimers.length = 0
+    clearTimeout(fastNowTimeout)
+    fastNowTimeout = null
+  },
+  /**
+   * Exporting for testing purposes only.
+   * Marking as deprecated to discourage any use outside of testing.
+   * @deprecated
+   */
+  kFastTimer
 }
 
 
@@ -19655,6 +20653,7 @@ class Cache {
       webidl.illegalConstructor()
     }
 
+    webidl.util.markAsUncloneable(this)
     this.#relevantRequestResponseList = arguments[1]
   }
 
@@ -20499,6 +21498,8 @@ class CacheStorage {
     if (arguments[0] !== kConstruct) {
       webidl.illegalConstructor()
     }
+
+    webidl.util.markAsUncloneable(this)
   }
 
   async match (request, options = {}) {
@@ -22037,6 +23038,8 @@ class EventSource extends EventTarget {
     // 1. Let ev be a new EventSource object.
     super()
 
+    webidl.util.markAsUncloneable(this)
+
     const prefix = 'EventSource constructor'
     webidl.argumentLengthCheck(arguments, 1, prefix)
 
@@ -22477,12 +23480,33 @@ const { kState } = __nccwpck_require__(4002)
 const { webidl } = __nccwpck_require__(8306)
 const { Blob } = __nccwpck_require__(4573)
 const assert = __nccwpck_require__(4589)
-const { isErrored } = __nccwpck_require__(6425)
+const { isErrored, isDisturbed } = __nccwpck_require__(7075)
 const { isArrayBuffer } = __nccwpck_require__(3429)
 const { serializeAMimeType } = __nccwpck_require__(8675)
 const { multipartFormDataParser } = __nccwpck_require__(6389)
+let random
+
+try {
+  const crypto = __nccwpck_require__(7598)
+  random = (max) => crypto.randomInt(0, max)
+} catch {
+  random = (max) => Math.floor(Math.random(max))
+}
 
 const textEncoder = new TextEncoder()
+function noop () {}
+
+const hasFinalizationRegistry = globalThis.FinalizationRegistry && process.version.indexOf('v18') !== 0
+let streamRegistry
+
+if (hasFinalizationRegistry) {
+  streamRegistry = new FinalizationRegistry((weakRef) => {
+    const stream = weakRef.deref()
+    if (stream && !stream.locked && !isDisturbed(stream) && !isErrored(stream)) {
+      stream.cancel('Response object has been garbage collected').catch(noop)
+    }
+  })
+}
 
 // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
 function extractBody (object, keepalive = false) {
@@ -22561,7 +23585,7 @@ function extractBody (object, keepalive = false) {
     // Set source to a copy of the bytes held by object.
     source = new Uint8Array(object.buffer.slice(object.byteOffset, object.byteOffset + object.byteLength))
   } else if (util.isFormDataLike(object)) {
-    const boundary = `----formdata-undici-0${`${Math.floor(Math.random() * 1e11)}`.padStart(11, '0')}`
+    const boundary = `----formdata-undici-0${`${random(1e11)}`.padStart(11, '0')}`
     const prefix = `--${boundary}\r\nContent-Disposition: form-data`
 
     /*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
@@ -22725,13 +23749,17 @@ function safelyExtractBody (object, keepalive = false) {
   return extractBody(object, keepalive)
 }
 
-function cloneBody (body) {
+function cloneBody (instance, body) {
   // To clone a body body, run these steps:
 
   // https://fetch.spec.whatwg.org/#concept-body-clone
 
   // 1. Let « out1, out2 » be the result of teeing body’s stream.
   const [out1, out2] = body.stream.tee()
+
+  if (hasFinalizationRegistry) {
+    streamRegistry.register(instance, new WeakRef(out1))
+  }
 
   // 2. Set body’s stream to out1.
   body.stream = out1
@@ -22875,7 +23903,7 @@ async function consumeBody (object, convertBytesToJSValue, instance) {
 
   // 1. If object is unusable, then return a promise rejected
   //    with a TypeError.
-  if (bodyUnusable(object[kState].body)) {
+  if (bodyUnusable(object)) {
     throw new TypeError('Body is unusable: Body has already been read')
   }
 
@@ -22915,7 +23943,9 @@ async function consumeBody (object, convertBytesToJSValue, instance) {
 }
 
 // https://fetch.spec.whatwg.org/#body-unusable
-function bodyUnusable (body) {
+function bodyUnusable (object) {
+  const body = object[kState].body
+
   // An object including the Body interface mixin is
   // said to be unusable if its body is non-null and
   // its body’s stream is disturbed or locked.
@@ -22957,7 +23987,10 @@ module.exports = {
   extractBody,
   safelyExtractBody,
   cloneBody,
-  mixinBody
+  mixinBody,
+  streamRegistry,
+  hasFinalizationRegistry,
+  bodyUnusable
 }
 
 
@@ -22968,28 +24001,31 @@ module.exports = {
 
 
 
-const corsSafeListedMethods = ['GET', 'HEAD', 'POST']
+const corsSafeListedMethods = /** @type {const} */ (['GET', 'HEAD', 'POST'])
 const corsSafeListedMethodsSet = new Set(corsSafeListedMethods)
 
-const nullBodyStatus = [101, 204, 205, 304]
+const nullBodyStatus = /** @type {const} */ ([101, 204, 205, 304])
 
-const redirectStatus = [301, 302, 303, 307, 308]
+const redirectStatus = /** @type {const} */ ([301, 302, 303, 307, 308])
 const redirectStatusSet = new Set(redirectStatus)
 
-// https://fetch.spec.whatwg.org/#block-bad-port
-const badPorts = [
+/**
+ * @see https://fetch.spec.whatwg.org/#block-bad-port
+ */
+const badPorts = /** @type {const} */ ([
   '1', '7', '9', '11', '13', '15', '17', '19', '20', '21', '22', '23', '25', '37', '42', '43', '53', '69', '77', '79',
   '87', '95', '101', '102', '103', '104', '109', '110', '111', '113', '115', '117', '119', '123', '135', '137',
   '139', '143', '161', '179', '389', '427', '465', '512', '513', '514', '515', '526', '530', '531', '532',
   '540', '548', '554', '556', '563', '587', '601', '636', '989', '990', '993', '995', '1719', '1720', '1723',
   '2049', '3659', '4045', '4190', '5060', '5061', '6000', '6566', '6665', '6666', '6667', '6668', '6669', '6679',
   '6697', '10080'
-]
-
+])
 const badPortsSet = new Set(badPorts)
 
-// https://w3c.github.io/webappsec-referrer-policy/#referrer-policies
-const referrerPolicy = [
+/**
+ * @see https://w3c.github.io/webappsec-referrer-policy/#referrer-policies
+ */
+const referrerPolicy = /** @type {const} */ ([
   '',
   'no-referrer',
   'no-referrer-when-downgrade',
@@ -22999,29 +24035,31 @@ const referrerPolicy = [
   'origin-when-cross-origin',
   'strict-origin-when-cross-origin',
   'unsafe-url'
-]
+])
 const referrerPolicySet = new Set(referrerPolicy)
 
-const requestRedirect = ['follow', 'manual', 'error']
+const requestRedirect = /** @type {const} */ (['follow', 'manual', 'error'])
 
-const safeMethods = ['GET', 'HEAD', 'OPTIONS', 'TRACE']
+const safeMethods = /** @type {const} */ (['GET', 'HEAD', 'OPTIONS', 'TRACE'])
 const safeMethodsSet = new Set(safeMethods)
 
-const requestMode = ['navigate', 'same-origin', 'no-cors', 'cors']
+const requestMode = /** @type {const} */ (['navigate', 'same-origin', 'no-cors', 'cors'])
 
-const requestCredentials = ['omit', 'same-origin', 'include']
+const requestCredentials = /** @type {const} */ (['omit', 'same-origin', 'include'])
 
-const requestCache = [
+const requestCache = /** @type {const} */ ([
   'default',
   'no-store',
   'reload',
   'no-cache',
   'force-cache',
   'only-if-cached'
-]
+])
 
-// https://fetch.spec.whatwg.org/#request-body-header-name
-const requestBodyHeader = [
+/**
+ * @see https://fetch.spec.whatwg.org/#request-body-header-name
+ */
+const requestBodyHeader = /** @type {const} */ ([
   'content-encoding',
   'content-language',
   'content-location',
@@ -23031,18 +24069,22 @@ const requestBodyHeader = [
   // removed in the Headers implementation. However, undici doesn't
   // filter out headers, so we add it here.
   'content-length'
-]
+])
 
-// https://fetch.spec.whatwg.org/#enumdef-requestduplex
-const requestDuplex = [
+/**
+ * @see https://fetch.spec.whatwg.org/#enumdef-requestduplex
+ */
+const requestDuplex = /** @type {const} */ ([
   'half'
-]
+])
 
-// http://fetch.spec.whatwg.org/#forbidden-method
-const forbiddenMethods = ['CONNECT', 'TRACE', 'TRACK']
+/**
+ * @see http://fetch.spec.whatwg.org/#forbidden-method
+ */
+const forbiddenMethods = /** @type {const} */ (['CONNECT', 'TRACE', 'TRACK'])
 const forbiddenMethodsSet = new Set(forbiddenMethods)
 
-const subresource = [
+const subresource = /** @type {const} */ ([
   'audio',
   'audioworklet',
   'font',
@@ -23055,7 +24097,7 @@ const subresource = [
   'video',
   'xslt',
   ''
-]
+])
 const subresourceSet = new Set(subresource)
 
 module.exports = {
@@ -24114,9 +25156,19 @@ function multipartFormDataParser (input, mimeType) {
   //    the first byte.
   const position = { position: 0 }
 
-  // Note: undici addition, allow \r\n before the body.
-  if (input[0] === 0x0d && input[1] === 0x0a) {
+  // Note: undici addition, allows leading and trailing CRLFs.
+  while (input[position.position] === 0x0d && input[position.position + 1] === 0x0a) {
     position.position += 2
+  }
+
+  let trailing = input.length
+
+  while (input[trailing - 1] === 0x0a && input[trailing - 2] === 0x0d) {
+    trailing -= 2
+  }
+
+  if (trailing !== input.length) {
+    input = input.subarray(0, trailing)
   }
 
   // 5. While true:
@@ -24512,6 +25564,8 @@ const File = globalThis.File ?? NativeFile
 // https://xhr.spec.whatwg.org/#formdata
 class FormData {
   constructor (form) {
+    webidl.util.markAsUncloneable(this)
+
     if (form !== undefined) {
       throw webidl.errors.conversionFailed({
         prefix: 'FormData constructor',
@@ -25161,6 +26215,8 @@ class Headers {
   #headersList
 
   constructor (init = undefined) {
+    webidl.util.markAsUncloneable(this)
+
     if (init === kConstruct) {
       return
     }
@@ -27631,7 +28687,7 @@ async function httpNetworkFetch (
 
           // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
           if (codings.length !== 0 && request.method !== 'HEAD' && request.method !== 'CONNECT' && !nullBodyStatus.includes(status) && !willFollow) {
-            for (let i = 0; i < codings.length; ++i) {
+            for (let i = codings.length - 1; i >= 0; --i) {
               const coding = codings[i]
               // https://www.rfc-editor.org/rfc/rfc9112.html#section-7.2
               if (coding === 'x-gzip' || coding === 'gzip') {
@@ -27644,9 +28700,15 @@ async function httpNetworkFetch (
                   finishFlush: zlib.constants.Z_SYNC_FLUSH
                 }))
               } else if (coding === 'deflate') {
-                decoders.push(createInflate())
+                decoders.push(createInflate({
+                  flush: zlib.constants.Z_SYNC_FLUSH,
+                  finishFlush: zlib.constants.Z_SYNC_FLUSH
+                }))
               } else if (coding === 'br') {
-                decoders.push(zlib.createBrotliDecompress())
+                decoders.push(zlib.createBrotliDecompress({
+                  flush: zlib.constants.BROTLI_OPERATION_FLUSH,
+                  finishFlush: zlib.constants.BROTLI_OPERATION_FLUSH
+                }))
               } else {
                 decoders.length = 0
                 break
@@ -27654,13 +28716,19 @@ async function httpNetworkFetch (
             }
           }
 
+          const onError = this.onError.bind(this)
+
           resolve({
             status,
             statusText,
             headersList,
             body: decoders.length
-              ? pipeline(this.body, ...decoders, () => { })
-              : this.body.on('error', () => { })
+              ? pipeline(this.body, ...decoders, (err) => {
+                if (err) {
+                  this.onError(err)
+                }
+              }).on('error', onError)
+              : this.body.on('error', onError)
           })
 
           return true
@@ -27757,7 +28825,7 @@ module.exports = {
 
 
 
-const { extractBody, mixinBody, cloneBody } = __nccwpck_require__(7679)
+const { extractBody, mixinBody, cloneBody, bodyUnusable } = __nccwpck_require__(7679)
 const { Headers, fill: fillHeaders, HeadersList, setHeadersGuard, getHeadersGuard, setHeadersList, getHeadersList } = __nccwpck_require__(289)
 const { FinalizationRegistry } = __nccwpck_require__(3546)()
 const util = __nccwpck_require__(6425)
@@ -27837,6 +28905,7 @@ let patchMethodWarning = false
 class Request {
   // https://fetch.spec.whatwg.org/#dom-request
   constructor (input, init = {}) {
+    webidl.util.markAsUncloneable(this)
     if (input === kConstruct) {
       return
     }
@@ -28312,7 +29381,7 @@ class Request {
     // 40. If initBody is null and inputBody is non-null, then:
     if (initBody == null && inputBody != null) {
       // 1. If input is unusable, then throw a TypeError.
-      if (util.isDisturbed(inputBody.stream) || inputBody.stream.locked) {
+      if (bodyUnusable(input)) {
         throw new TypeError(
           'Cannot construct a Request with a Request object that has already been used.'
         )
@@ -28514,7 +29583,7 @@ class Request {
     webidl.brandCheck(this, Request)
 
     // 1. If this is unusable, then throw a TypeError.
-    if (this.bodyUsed || this.body?.locked) {
+    if (bodyUnusable(this)) {
       throw new TypeError('unusable')
     }
 
@@ -28632,7 +29701,7 @@ function cloneRequest (request) {
   // 2. If request’s body is non-null, set newRequest’s body to the
   // result of cloning request’s body.
   if (request.body != null) {
-    newRequest.body = cloneBody(request.body)
+    newRequest.body = cloneBody(newRequest, request.body)
   }
 
   // 3. Return newRequest.
@@ -28799,7 +29868,7 @@ module.exports = { Request, makeRequest, fromInnerRequest, cloneRequest }
 
 
 const { Headers, HeadersList, fill, getHeadersGuard, setHeadersGuard, setHeadersList } = __nccwpck_require__(289)
-const { extractBody, cloneBody, mixinBody } = __nccwpck_require__(7679)
+const { extractBody, cloneBody, mixinBody, hasFinalizationRegistry, streamRegistry, bodyUnusable } = __nccwpck_require__(7679)
 const util = __nccwpck_require__(6425)
 const nodeUtil = __nccwpck_require__(7975)
 const { kEnumerableProperty } = util
@@ -28824,23 +29893,8 @@ const { URLSerializer } = __nccwpck_require__(8675)
 const { kConstruct } = __nccwpck_require__(3112)
 const assert = __nccwpck_require__(4589)
 const { types } = __nccwpck_require__(7975)
-const { isDisturbed, isErrored } = __nccwpck_require__(7075)
 
 const textEncoder = new TextEncoder('utf-8')
-
-const hasFinalizationRegistry = globalThis.FinalizationRegistry && process.version.indexOf('v18') !== 0
-let registry
-
-if (hasFinalizationRegistry) {
-  registry = new FinalizationRegistry((weakRef) => {
-    const stream = weakRef.deref()
-    if (stream && !stream.locked && !isDisturbed(stream) && !isErrored(stream)) {
-      stream.cancel('Response object has been garbage collected').catch(noop)
-    }
-  })
-}
-
-function noop () {}
 
 // https://fetch.spec.whatwg.org/#response-class
 class Response {
@@ -28923,6 +29977,7 @@ class Response {
 
   // https://fetch.spec.whatwg.org/#dom-response
   constructor (body = null, init = {}) {
+    webidl.util.markAsUncloneable(this)
     if (body === kConstruct) {
       return
     }
@@ -29042,7 +30097,7 @@ class Response {
     webidl.brandCheck(this, Response)
 
     // 1. If this is unusable, then throw a TypeError.
-    if (this.bodyUsed || this.body?.locked) {
+    if (bodyUnusable(this)) {
       throw webidl.errors.exception({
         header: 'Response.clone',
         message: 'Body has already been consumed.'
@@ -29125,7 +30180,7 @@ function cloneResponse (response) {
   // 3. If response’s body is non-null, then set newResponse’s body to the
   // result of cloning response’s body.
   if (response.body != null) {
-    newResponse.body = cloneBody(response.body)
+    newResponse.body = cloneBody(newResponse, response.body)
   }
 
   // 4. Return newResponse.
@@ -29330,7 +30385,7 @@ function fromInnerResponse (innerResponse, guard) {
     // a primitive or an object, even undefined. If the held value is an object, the registry keeps
     // a strong reference to it (so it can pass it to the cleanup callback later). Reworded from
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/FinalizationRegistry
-    registry.register(response, new WeakRef(innerResponse.body.stream))
+    streamRegistry.register(response, new WeakRef(innerResponse.body.stream))
   }
 
   return response
@@ -30780,6 +31835,14 @@ function buildContentRange (rangeStart, rangeEnd, fullLength) {
 // interpreted as a zlib stream, otherwise it's interpreted as a
 // raw deflate stream.
 class InflateStream extends Transform {
+  #zlibOptions
+
+  /** @param {zlib.ZlibOptions} [zlibOptions] */
+  constructor (zlibOptions) {
+    super()
+    this.#zlibOptions = zlibOptions
+  }
+
   _transform (chunk, encoding, callback) {
     if (!this._inflateStream) {
       if (chunk.length === 0) {
@@ -30787,8 +31850,8 @@ class InflateStream extends Transform {
         return
       }
       this._inflateStream = (chunk[0] & 0x0F) === 0x08
-        ? zlib.createInflate()
-        : zlib.createInflateRaw()
+        ? zlib.createInflate(this.#zlibOptions)
+        : zlib.createInflateRaw(this.#zlibOptions)
 
       this._inflateStream.on('data', this.push.bind(this))
       this._inflateStream.on('end', () => this.push(null))
@@ -30807,8 +31870,12 @@ class InflateStream extends Transform {
   }
 }
 
-function createInflate () {
-  return new InflateStream()
+/**
+ * @param {zlib.ZlibOptions} [zlibOptions]
+ * @returns {InflateStream}
+ */
+function createInflate (zlibOptions) {
+  return new InflateStream(zlibOptions)
 }
 
 /**
@@ -31068,6 +32135,7 @@ module.exports = {
 
 
 const { types, inspect } = __nccwpck_require__(7975)
+const { markAsUncloneable } = __nccwpck_require__(5919)
 const { toUSVString } = __nccwpck_require__(6425)
 
 /** @type {import('../../../types/webidl').Webidl} */
@@ -31153,6 +32221,7 @@ webidl.util.Type = function (V) {
   }
 }
 
+webidl.util.markAsUncloneable = markAsUncloneable || (() => {})
 // https://webidl.spec.whatwg.org/#abstract-opdef-converttoint
 webidl.util.ConvertToInt = function (V, bitLength, signedness, opts) {
   let upperBound
@@ -33380,6 +34449,7 @@ class MessageEvent extends Event {
   constructor (type, eventInitDict = {}) {
     if (type === kConstruct) {
       super(arguments[1], arguments[2])
+      webidl.util.markAsUncloneable(this)
       return
     }
 
@@ -33392,6 +34462,7 @@ class MessageEvent extends Event {
     super(type, eventInitDict)
 
     this.#eventInit = eventInitDict
+    webidl.util.markAsUncloneable(this)
   }
 
   get data () {
@@ -33478,6 +34549,7 @@ class CloseEvent extends Event {
     super(type, eventInitDict)
 
     this.#eventInit = eventInitDict
+    webidl.util.markAsUncloneable(this)
   }
 
   get wasClean () {
@@ -33508,6 +34580,7 @@ class ErrorEvent extends Event {
     webidl.argumentLengthCheck(arguments, 1, prefix)
 
     super(type, eventInitDict)
+    webidl.util.markAsUncloneable(this)
 
     type = webidl.converters.DOMString(type, prefix, 'type')
     eventInitDict = webidl.converters.ErrorEventInit(eventInitDict ?? {})
@@ -34810,6 +35883,8 @@ class WebSocket extends EventTarget {
    */
   constructor (url, protocols = []) {
     super()
+
+    webidl.util.markAsUncloneable(this)
 
     const prefix = 'WebSocket constructor'
     webidl.argumentLengthCheck(arguments, 1, prefix)
@@ -45355,7 +46430,17 @@ function extractMetaTags(body, options) {
                 if (scriptText) {
                     scriptText = scriptText.replace(/(\r\n|\n|\r)/gm, ''); // remove newlines
                     scriptText = (0, utils_1.unescapeScriptText)(scriptText);
-                    ogObject.jsonLD.push(JSON.parse(scriptText));
+                    try {
+                        ogObject.jsonLD.push(JSON.parse(scriptText));
+                    }
+                    catch (error) {
+                        if (options.jsonLDOptions?.logOnJSONParseError) {
+                            console.error('Error parsing JSON-LD script tag:', error);
+                        }
+                        if (options.jsonLDOptions?.throwOnJSONParseError) {
+                            throw error;
+                        }
+                    }
                 }
             }
         });
@@ -47162,7 +48247,8 @@ async function requestAndResultsFormatter(options) {
         else {
             body = (0, iconv_lite_1.decode)(Buffer.from(bodyArrayBuffer), charset);
         }
-        if (response?.headers?.get('content-type') && !response.headers.get('content-type')?.includes('text/')) {
+        const contentType = response?.headers?.get('content-type')?.toLowerCase();
+        if (contentType && !contentType.includes('text/')) {
             throw new Error('Page must return a header content-type with text/');
         }
         if (response?.status && (response.status.toString().startsWith('4') || response.status.toString().startsWith('5'))) {
@@ -47445,7 +48531,8 @@ module.exports.createRedirectInterceptor = createRedirectInterceptor
 module.exports.interceptors = {
   redirect: __nccwpck_require__(3320),
   retry: __nccwpck_require__(5608),
-  dump: __nccwpck_require__(4958)
+  dump: __nccwpck_require__(4958),
+  dns: __nccwpck_require__(3305)
 }
 
 module.exports.buildConnector = buildConnector
@@ -48089,7 +49176,7 @@ class RequestHandler extends AsyncResource {
         this.removeAbortListener = util.addAbortListener(this.signal, () => {
           this.reason = this.signal.reason ?? new RequestAbortedError()
           if (this.res) {
-            util.destroy(this.res, this.reason)
+            util.destroy(this.res.on('error', util.nop), this.reason)
           } else if (this.abort) {
             this.abort(this.reason)
           }
@@ -53038,6 +54125,8 @@ const {
 
 const kOpenStreams = Symbol('open streams')
 
+let extractBody
+
 // Experimental
 let h2ExperimentalWarned = false
 
@@ -53247,11 +54336,12 @@ function onHTTP2GoAway (code) {
   util.destroy(this[kSocket], err)
 
   // Fail head of pipeline.
-  const request = client[kQueue][client[kRunningIdx]]
-  client[kQueue][client[kRunningIdx]++] = null
-  util.errorRequest(client, request, err)
-
-  client[kPendingIdx] = client[kRunningIdx]
+  if (client[kRunningIdx] < client[kQueue].length) {
+    const request = client[kQueue][client[kRunningIdx]]
+    client[kQueue][client[kRunningIdx]++] = null
+    util.errorRequest(client, request, err)
+    client[kPendingIdx] = client[kRunningIdx]
+  }
 
   assert(client[kRunning] === 0)
 
@@ -53267,7 +54357,8 @@ function shouldSendContentLength (method) {
 
 function writeH2 (client, request) {
   const session = client[kHTTP2Session]
-  const { body, method, path, host, upgrade, expectContinue, signal, headers: reqHeaders } = request
+  const { method, path, host, upgrade, expectContinue, signal, headers: reqHeaders } = request
+  let { body } = request
 
   if (upgrade) {
     util.errorRequest(client, request, new Error('Upgrade not supported for H2'))
@@ -53387,6 +54478,16 @@ function writeH2 (client, request) {
   }
 
   let contentLength = util.bodyLength(body)
+
+  if (util.isFormDataLike(body)) {
+    extractBody ??= (__nccwpck_require__(3502).extractBody)
+
+    const [bodyStream, contentType] = extractBody(body)
+    headers['content-type'] = contentType
+
+    body = bodyStream.stream
+    contentLength = bodyStream.length
+  }
 
   if (contentLength == null) {
     contentLength = request.contentLength
@@ -55248,6 +56349,20 @@ class Pool extends PoolBase {
       ? { ...options.interceptors }
       : undefined
     this[kFactory] = factory
+
+    this.on('connectionError', (origin, targets, error) => {
+      // If a connection error occurs, we remove the client from the pool,
+      // and emit a connectionError event. They will not be re-used.
+      // Fixes https://github.com/nodejs/undici/issues/3895
+      for (const target of targets) {
+        // Do not use kRemoveClient here, as it will close the client,
+        // but the client cannot be closed in this state.
+        const idx = this[kClients].indexOf(target)
+        if (idx !== -1) {
+          this[kClients].splice(idx, 1)
+        }
+      }
+    })
   }
 
   [kGetDispatcher] () {
@@ -56217,6 +57332,388 @@ class RetryHandler {
 }
 
 module.exports = RetryHandler
+
+
+/***/ }),
+
+/***/ 3305:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+
+const { isIP } = __nccwpck_require__(7030)
+const { lookup } = __nccwpck_require__(610)
+const DecoratorHandler = __nccwpck_require__(5657)
+const { InvalidArgumentError, InformationalError } = __nccwpck_require__(6117)
+const maxInt = Math.pow(2, 31) - 1
+
+class DNSInstance {
+  #maxTTL = 0
+  #maxItems = 0
+  #records = new Map()
+  dualStack = true
+  affinity = null
+  lookup = null
+  pick = null
+
+  constructor (opts) {
+    this.#maxTTL = opts.maxTTL
+    this.#maxItems = opts.maxItems
+    this.dualStack = opts.dualStack
+    this.affinity = opts.affinity
+    this.lookup = opts.lookup ?? this.#defaultLookup
+    this.pick = opts.pick ?? this.#defaultPick
+  }
+
+  get full () {
+    return this.#records.size === this.#maxItems
+  }
+
+  runLookup (origin, opts, cb) {
+    const ips = this.#records.get(origin.hostname)
+
+    // If full, we just return the origin
+    if (ips == null && this.full) {
+      cb(null, origin.origin)
+      return
+    }
+
+    const newOpts = {
+      affinity: this.affinity,
+      dualStack: this.dualStack,
+      lookup: this.lookup,
+      pick: this.pick,
+      ...opts.dns,
+      maxTTL: this.#maxTTL,
+      maxItems: this.#maxItems
+    }
+
+    // If no IPs we lookup
+    if (ips == null) {
+      this.lookup(origin, newOpts, (err, addresses) => {
+        if (err || addresses == null || addresses.length === 0) {
+          cb(err ?? new InformationalError('No DNS entries found'))
+          return
+        }
+
+        this.setRecords(origin, addresses)
+        const records = this.#records.get(origin.hostname)
+
+        const ip = this.pick(
+          origin,
+          records,
+          newOpts.affinity
+        )
+
+        let port
+        if (typeof ip.port === 'number') {
+          port = `:${ip.port}`
+        } else if (origin.port !== '') {
+          port = `:${origin.port}`
+        } else {
+          port = ''
+        }
+
+        cb(
+          null,
+          `${origin.protocol}//${
+            ip.family === 6 ? `[${ip.address}]` : ip.address
+          }${port}`
+        )
+      })
+    } else {
+      // If there's IPs we pick
+      const ip = this.pick(
+        origin,
+        ips,
+        newOpts.affinity
+      )
+
+      // If no IPs we lookup - deleting old records
+      if (ip == null) {
+        this.#records.delete(origin.hostname)
+        this.runLookup(origin, opts, cb)
+        return
+      }
+
+      let port
+      if (typeof ip.port === 'number') {
+        port = `:${ip.port}`
+      } else if (origin.port !== '') {
+        port = `:${origin.port}`
+      } else {
+        port = ''
+      }
+
+      cb(
+        null,
+        `${origin.protocol}//${
+          ip.family === 6 ? `[${ip.address}]` : ip.address
+        }${port}`
+      )
+    }
+  }
+
+  #defaultLookup (origin, opts, cb) {
+    lookup(
+      origin.hostname,
+      {
+        all: true,
+        family: this.dualStack === false ? this.affinity : 0,
+        order: 'ipv4first'
+      },
+      (err, addresses) => {
+        if (err) {
+          return cb(err)
+        }
+
+        const results = new Map()
+
+        for (const addr of addresses) {
+          // On linux we found duplicates, we attempt to remove them with
+          // the latest record
+          results.set(`${addr.address}:${addr.family}`, addr)
+        }
+
+        cb(null, results.values())
+      }
+    )
+  }
+
+  #defaultPick (origin, hostnameRecords, affinity) {
+    let ip = null
+    const { records, offset } = hostnameRecords
+
+    let family
+    if (this.dualStack) {
+      if (affinity == null) {
+        // Balance between ip families
+        if (offset == null || offset === maxInt) {
+          hostnameRecords.offset = 0
+          affinity = 4
+        } else {
+          hostnameRecords.offset++
+          affinity = (hostnameRecords.offset & 1) === 1 ? 6 : 4
+        }
+      }
+
+      if (records[affinity] != null && records[affinity].ips.length > 0) {
+        family = records[affinity]
+      } else {
+        family = records[affinity === 4 ? 6 : 4]
+      }
+    } else {
+      family = records[affinity]
+    }
+
+    // If no IPs we return null
+    if (family == null || family.ips.length === 0) {
+      return ip
+    }
+
+    if (family.offset == null || family.offset === maxInt) {
+      family.offset = 0
+    } else {
+      family.offset++
+    }
+
+    const position = family.offset % family.ips.length
+    ip = family.ips[position] ?? null
+
+    if (ip == null) {
+      return ip
+    }
+
+    if (Date.now() - ip.timestamp > ip.ttl) { // record TTL is already in ms
+      // We delete expired records
+      // It is possible that they have different TTL, so we manage them individually
+      family.ips.splice(position, 1)
+      return this.pick(origin, hostnameRecords, affinity)
+    }
+
+    return ip
+  }
+
+  setRecords (origin, addresses) {
+    const timestamp = Date.now()
+    const records = { records: { 4: null, 6: null } }
+    for (const record of addresses) {
+      record.timestamp = timestamp
+      if (typeof record.ttl === 'number') {
+        // The record TTL is expected to be in ms
+        record.ttl = Math.min(record.ttl, this.#maxTTL)
+      } else {
+        record.ttl = this.#maxTTL
+      }
+
+      const familyRecords = records.records[record.family] ?? { ips: [] }
+
+      familyRecords.ips.push(record)
+      records.records[record.family] = familyRecords
+    }
+
+    this.#records.set(origin.hostname, records)
+  }
+
+  getHandler (meta, opts) {
+    return new DNSDispatchHandler(this, meta, opts)
+  }
+}
+
+class DNSDispatchHandler extends DecoratorHandler {
+  #state = null
+  #opts = null
+  #dispatch = null
+  #handler = null
+  #origin = null
+
+  constructor (state, { origin, handler, dispatch }, opts) {
+    super(handler)
+    this.#origin = origin
+    this.#handler = handler
+    this.#opts = { ...opts }
+    this.#state = state
+    this.#dispatch = dispatch
+  }
+
+  onError (err) {
+    switch (err.code) {
+      case 'ETIMEDOUT':
+      case 'ECONNREFUSED': {
+        if (this.#state.dualStack) {
+          // We delete the record and retry
+          this.#state.runLookup(this.#origin, this.#opts, (err, newOrigin) => {
+            if (err) {
+              return this.#handler.onError(err)
+            }
+
+            const dispatchOpts = {
+              ...this.#opts,
+              origin: newOrigin
+            }
+
+            this.#dispatch(dispatchOpts, this)
+          })
+
+          // if dual-stack disabled, we error out
+          return
+        }
+
+        this.#handler.onError(err)
+        return
+      }
+      case 'ENOTFOUND':
+        this.#state.deleteRecord(this.#origin)
+      // eslint-disable-next-line no-fallthrough
+      default:
+        this.#handler.onError(err)
+        break
+    }
+  }
+}
+
+module.exports = interceptorOpts => {
+  if (
+    interceptorOpts?.maxTTL != null &&
+    (typeof interceptorOpts?.maxTTL !== 'number' || interceptorOpts?.maxTTL < 0)
+  ) {
+    throw new InvalidArgumentError('Invalid maxTTL. Must be a positive number')
+  }
+
+  if (
+    interceptorOpts?.maxItems != null &&
+    (typeof interceptorOpts?.maxItems !== 'number' ||
+      interceptorOpts?.maxItems < 1)
+  ) {
+    throw new InvalidArgumentError(
+      'Invalid maxItems. Must be a positive number and greater than zero'
+    )
+  }
+
+  if (
+    interceptorOpts?.affinity != null &&
+    interceptorOpts?.affinity !== 4 &&
+    interceptorOpts?.affinity !== 6
+  ) {
+    throw new InvalidArgumentError('Invalid affinity. Must be either 4 or 6')
+  }
+
+  if (
+    interceptorOpts?.dualStack != null &&
+    typeof interceptorOpts?.dualStack !== 'boolean'
+  ) {
+    throw new InvalidArgumentError('Invalid dualStack. Must be a boolean')
+  }
+
+  if (
+    interceptorOpts?.lookup != null &&
+    typeof interceptorOpts?.lookup !== 'function'
+  ) {
+    throw new InvalidArgumentError('Invalid lookup. Must be a function')
+  }
+
+  if (
+    interceptorOpts?.pick != null &&
+    typeof interceptorOpts?.pick !== 'function'
+  ) {
+    throw new InvalidArgumentError('Invalid pick. Must be a function')
+  }
+
+  const dualStack = interceptorOpts?.dualStack ?? true
+  let affinity
+  if (dualStack) {
+    affinity = interceptorOpts?.affinity ?? null
+  } else {
+    affinity = interceptorOpts?.affinity ?? 4
+  }
+
+  const opts = {
+    maxTTL: interceptorOpts?.maxTTL ?? 10e3, // Expressed in ms
+    lookup: interceptorOpts?.lookup ?? null,
+    pick: interceptorOpts?.pick ?? null,
+    dualStack,
+    affinity,
+    maxItems: interceptorOpts?.maxItems ?? Infinity
+  }
+
+  const instance = new DNSInstance(opts)
+
+  return dispatch => {
+    return function dnsInterceptor (origDispatchOpts, handler) {
+      const origin =
+        origDispatchOpts.origin.constructor === URL
+          ? origDispatchOpts.origin
+          : new URL(origDispatchOpts.origin)
+
+      if (isIP(origin.hostname) !== 0) {
+        return dispatch(origDispatchOpts, handler)
+      }
+
+      instance.runLookup(origin, origDispatchOpts, (err, newOrigin) => {
+        if (err) {
+          return handler.onError(err)
+        }
+
+        let dispatchOpts = null
+        dispatchOpts = {
+          ...origDispatchOpts,
+          servername: origin.hostname, // For SNI on TLS
+          origin: newOrigin,
+          headers: {
+            host: origin.hostname,
+            ...origDispatchOpts.headers
+          }
+        }
+
+        dispatch(
+          dispatchOpts,
+          instance.getHandler({ origin, dispatch, handler }, origDispatchOpts)
+        )
+      })
+
+      return true
+    }
+  }
+}
 
 
 /***/ }),
@@ -61095,6 +62592,14 @@ const { isErrored, isDisturbed } = __nccwpck_require__(7075)
 const { isArrayBuffer } = __nccwpck_require__(3429)
 const { serializeAMimeType } = __nccwpck_require__(6082)
 const { multipartFormDataParser } = __nccwpck_require__(9442)
+let random
+
+try {
+  const crypto = __nccwpck_require__(7598)
+  random = (max) => crypto.randomInt(0, max)
+} catch {
+  random = (max) => Math.floor(Math.random(max))
+}
 
 const textEncoder = new TextEncoder()
 function noop () {}
@@ -61188,7 +62693,7 @@ function extractBody (object, keepalive = false) {
     // Set source to a copy of the bytes held by object.
     source = new Uint8Array(object.buffer.slice(object.byteOffset, object.byteOffset + object.byteLength))
   } else if (util.isFormDataLike(object)) {
-    const boundary = `----formdata-undici-0${`${Math.floor(Math.random() * 1e11)}`.padStart(11, '0')}`
+    const boundary = `----formdata-undici-0${`${random(1e11)}`.padStart(11, '0')}`
     const prefix = `--${boundary}\r\nContent-Disposition: form-data`
 
     /*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
@@ -79699,7 +81204,7 @@ module.exports = {
 
 
 const { parseSetCookie } = __nccwpck_require__(8915)
-const { stringify, getHeadersList } = __nccwpck_require__(3834)
+const { stringify } = __nccwpck_require__(3834)
 const { webidl } = __nccwpck_require__(4222)
 const { Headers } = __nccwpck_require__(6349)
 
@@ -79775,14 +81280,13 @@ function getSetCookies (headers) {
 
   webidl.brandCheck(headers, Headers, { strict: false })
 
-  const cookies = getHeadersList(headers).cookies
+  const cookies = headers.getSetCookie()
 
   if (!cookies) {
     return []
   }
 
-  // In older versions of undici, cookies is a list of name:value.
-  return cookies.map((pair) => parseSetCookie(Array.isArray(pair) ? pair[1] : pair))
+  return cookies.map((pair) => parseSetCookie(pair))
 }
 
 /**
@@ -80209,13 +81713,14 @@ module.exports = {
 /***/ }),
 
 /***/ 3834:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((module) => {
 
 
 
-const assert = __nccwpck_require__(2613)
-const { kHeadersList } = __nccwpck_require__(6443)
-
+/**
+ * @param {string} value
+ * @returns {boolean}
+ */
 function isCTLExcludingHtab (value) {
   if (value.length === 0) {
     return false
@@ -80476,31 +81981,13 @@ function stringify (cookie) {
   return out.join('; ')
 }
 
-let kHeadersListNode
-
-function getHeadersList (headers) {
-  if (headers[kHeadersList]) {
-    return headers[kHeadersList]
-  }
-
-  if (!kHeadersListNode) {
-    kHeadersListNode = Object.getOwnPropertySymbols(headers).find(
-      (symbol) => symbol.description === 'headers list'
-    )
-
-    assert(kHeadersListNode, 'Headers cannot be parsed')
-  }
-
-  const headersList = headers[kHeadersListNode]
-  assert(headersList)
-
-  return headersList
-}
-
 module.exports = {
   isCTLExcludingHtab,
-  stringify,
-  getHeadersList
+  validateCookieName,
+  validateCookiePath,
+  validateCookieValue,
+  toIMFDate,
+  stringify
 }
 
 
@@ -82421,6 +83908,14 @@ const { isUint8Array, isArrayBuffer } = __nccwpck_require__(8253)
 const { File: UndiciFile } = __nccwpck_require__(3041)
 const { parseMIMEType, serializeAMimeType } = __nccwpck_require__(4322)
 
+let random
+try {
+  const crypto = __nccwpck_require__(7598)
+  random = (max) => crypto.randomInt(0, max)
+} catch {
+  random = (max) => Math.floor(Math.random(max))
+}
+
 let ReadableStream = globalThis.ReadableStream
 
 /** @type {globalThis['File']} */
@@ -82506,7 +84001,7 @@ function extractBody (object, keepalive = false) {
     // Set source to a copy of the bytes held by object.
     source = new Uint8Array(object.buffer.slice(object.byteOffset, object.byteOffset + object.byteLength))
   } else if (util.isFormDataLike(object)) {
-    const boundary = `----formdata-undici-0${`${Math.floor(Math.random() * 1e11)}`.padStart(11, '0')}`
+    const boundary = `----formdata-undici-0${`${random(1e11)}`.padStart(11, '0')}`
     const prefix = `--${boundary}\r\nContent-Disposition: form-data`
 
     /*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
@@ -84483,6 +85978,7 @@ const {
   isValidHeaderName,
   isValidHeaderValue
 } = __nccwpck_require__(5523)
+const util = __nccwpck_require__(9023)
 const { webidl } = __nccwpck_require__(4222)
 const assert = __nccwpck_require__(2613)
 
@@ -85036,6 +86532,9 @@ Object.defineProperties(Headers.prototype, {
   [Symbol.toStringTag]: {
     value: 'Headers',
     configurable: true
+  },
+  [util.inspect.custom]: {
+    enumerable: false
   }
 })
 
@@ -94183,6 +95682,20 @@ class Pool extends PoolBase {
       ? { ...options.interceptors }
       : undefined
     this[kFactory] = factory
+
+    this.on('connectionError', (origin, targets, error) => {
+      // If a connection error occurs, we remove the client from the pool,
+      // and emit a connectionError event. They will not be re-used.
+      // Fixes https://github.com/nodejs/undici/issues/3895
+      for (const target of targets) {
+        // Do not use kRemoveClient here, as it will close the client,
+        // but the client cannot be closed in this state.
+        const idx = this[kClients].indexOf(target)
+        if (idx !== -1) {
+          this[kClients].splice(idx, 1)
+        }
+      }
+    })
   }
 
   [kGetDispatcher] () {
@@ -97161,6 +98674,13 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:crypto"
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:diagnostics_channel");
+
+/***/ }),
+
+/***/ 610:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:dns");
 
 /***/ }),
 
