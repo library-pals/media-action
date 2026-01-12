@@ -92,7 +92,7 @@ jobs:
     name: Media
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Media
         id: media-log
